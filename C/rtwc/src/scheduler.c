@@ -7,6 +7,22 @@
 #include "error.h"
 #include "led_utils.h"
 
+typedef struct
+{
+	uint16_t		ID;
+	uint32_t		startTime;
+	uint32_t		scheduledTime;
+	uint32_t		delay;
+	uint8_t			isScheduled;
+	uint8_t			isAllocated;
+	PTASKPARM		pParameter;
+	
+	void (* run)(PTASKPARM);
+}
+TASKDEF;
+
+typedef TASKDEF *	PTASKDEF;
+
 extern volatile uint32_t _realTimeClock;
 
 TASKDEF		taskDefs[MAX_TASKS];
@@ -56,6 +72,29 @@ void registerTask(uint16_t taskID, void (* run)(PTASKPARM))
 	}
 	if (taskCount > MAX_TASKS) {
 		handleError(ERROR_SCHED_TASKCOUNTOVERFLOW);
+	}
+}
+
+void deregisterTask(uint16_t taskID)
+{
+	int			i = 0;
+	PTASKDEF	td = NULL;
+	
+	for (i = 0;i < MAX_TASKS;i++) {
+		td = &taskDefs[i];
+		
+		if (td->ID == taskID) {
+			td->ID				= 0;
+			td->startTime		= 0;
+			td->scheduledTime	= 0;
+			td->delay			= 0;
+			td->isScheduled		= 0;
+			td->isAllocated		= 0;
+			td->pParameter		= NULL;
+			
+			taskCount--;
+			break;
+		}
 	}
 }
 

@@ -3,10 +3,8 @@
 
 typedef struct
 {
-	uint8_t		messageID; 
 	uint8_t		command;
 	uint8_t * 	message; 
-	uint8_t 	dataLength; 
 	uint8_t 	errorState;
 }
 RX_CMD;

@@ -1,5 +1,5 @@
 #ifndef BAUD
-#define BAUD		38400
+#define BAUD		115200
 #endif
 
 #include <stdint.h>
@@ -11,13 +11,12 @@
 #include "taskdef.h"
 #include "serial_atmega328p.h"
 #include "rxcmdtask.h"
+#include "adctask.h"
 
 #include "led_utils.h"
 
 volatile uint8_t			txBuffer[64];
 volatile uint8_t			txLength = 0;
-
-volatile uint8_t			currentMessageID = 0;
 
 void setupSerial()
 {
@@ -89,13 +88,11 @@ uint8_t getTxMessageLength()
 	return txLength;
 }
 
-void respondAck(uint8_t messageID)
+void respondAck()
 {
 	txBuffer[0] = MSG_START;
 	txBuffer[1] = MSG_PADDING;
-//	txBuffer[2] = messageID;
 	txBuffer[2] = RESPONSE_ACK;
-//	txBuffer[4] = 0;
 	txBuffer[3] = MSG_FINISH;
 	
 	txLength = 4;
@@ -106,19 +103,44 @@ void respondAck(uint8_t messageID)
 	enableTxInterrupt();
 }
 
-void buildWeatherResponse(uint8_t messageID)
+void buildWeatherResponse()
 {
 	txBuffer[0] = MSG_START;
 	txBuffer[1] = MSG_PADDING;
-	txBuffer[2] = messageID;
 	txBuffer[3] = RESPONSE_ACK;
-	txBuffer[4] = 0;
-	txBuffer[5] = MSG_FINISH;
+	txBuffer[4] = MSG_FINISH;
 	
-	txLength = RESPONSE_ACK_LENGTH;
+	txLength = 4;
 	
 	// Start transmission by setting tx register...
 	UDR0 = getNextTxByte(1);
+}
+
+void respondADC(uint8_t * data, uint8_t length)
+{
+	int				i;
+	uint16_t		adcResult;
+	uint8_t			channel = data[0] - 0x30;
+	
+	txBuffer[0] = MSG_START;
+	txBuffer[1] = MSG_PADDING;
+	txBuffer[2] = RESPONSE_ADC;
+	txBuffer[3] = data[0];
+	
+	adcResult = getADCAverage(channel);
+	
+	for (i = 13;i > 3;i--) {
+		txBuffer[i] = ((adcResult >> (i - 4)) & 0x01) + 0x30;  // '0' or '1'
+	}
+	
+	txBuffer[14] = MSG_FINISH;
+	
+	txLength = 15;
+	
+	// Start transmission by setting tx register...
+	UDR0 = getNextTxByte(1);
+	
+	enableTxInterrupt();
 }
 
 void debug(uint32_t count)
@@ -163,46 +185,35 @@ void handleRxInterrupt()
 		
 		case STATE_PADDING:
 			if (b == MSG_PADDING) {
-				//state = STATE_MSGID;
 				state = STATE_COMMAND;
 			}
 			else {
 				errorState = RX_ERROR_PADDING;
 			}
 			break;
-
-		/*
-		** Skip this step for now whilst we're
-		** getting the handler routine working...
-		*/
-		case STATE_MSGID:
-			currentMessageID = b;
-			state = STATE_COMMAND;
-			break;
 		
 		case STATE_COMMAND:
 			command = b;
 			
-			state = STATE_FINISH;
-			break;
-		
-		/*
-		** Skip the next two steps for now whilst we're
-		** getting the handler routine working...
-		*/
-		case STATE_DATALEN:
-			if (b <= MAX_MESSAGE_LENGTH) {
-				dataLength = b;
-
-				if (dataLength == 0) {
-					state = STATE_FINISH;
-				}
-				else {
+			/*
+			** Set data length explicitly if appropriate for the
+			** command, default is 0 data length...
+			*/
+			switch (command) {
+				case COMMAND_WEATHER:
+					dataLength = COMMAND_WEATHER_LENGTH;
 					state = STATE_DATA;
-				}
-			}
-			else {
-				errorState = RX_ERROR_DATALEN;
+					break;
+			
+				case COMMAND_ADC:
+					dataLength = COMMAND_ADC_LENGTH;
+					state = STATE_DATA;
+					break;
+					
+				default:
+					dataLength = 0;
+					state = STATE_FINISH;
+					break;
 			}
 			break;
 		
@@ -223,10 +234,8 @@ void handleRxInterrupt()
 				errorState = RX_ERROR_DATA_OVERRUN;
 			}
 			
-			rxParms.messageID	= currentMessageID;
 			rxParms.command 	= command;
 			rxParms.message		= message;
-			rxParms.dataLength	= dataLength;
 			rxParms.errorState	= errorState;
 
 			scheduleTask(TASK_RXCMD, 10, &rxParms);
@@ -246,29 +255,31 @@ void handleTxInterrupt()
 }
 
 void processCommand(
-		uint8_t		messageID,
 		uint8_t		command,
 		uint8_t * 	message, 
-		uint8_t 	dataLength, 
 		uint8_t 	errorState)
 {
 	switch (command) {
 		case COMMAND_PING:
-			respondAck(messageID);
+			respondAck();
 			break;
 			
 		case COMMAND_WEATHER:
-			buildWeatherResponse(messageID);
+			buildWeatherResponse();
 			break;
 			
 		case COMMAND_LEDON:
 			turnOn(LED_PORT0);
-			respondAck(messageID);
+			respondAck();
 			break;
 			
 		case COMMAND_LEDOFF:
 			turnOff(LED_PORT0);
-			respondAck(messageID);
+			respondAck();
+			break;
+			
+		case COMMAND_ADC:
+			respondADC(message, COMMAND_ADC_LENGTH);
 			break;
 	}
 }

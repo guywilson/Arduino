@@ -14,14 +14,14 @@ void LEDTask1(PTASKPARM p)
 		/* set pin 5 low to turn led off */
 		PORTB &= ~LED_ONBOARD;
         on = 0;
+		scheduleTask(TASK_LED1, 1000, NULL);
     }
     else {
 		/* set pin 5 high to turn led on */
 		PORTB |= LED_ONBOARD;
         on = 1;
+		scheduleTask(TASK_LED1, 50, NULL);
     }
-	
-	rescheduleTask(TASK_LED1, NULL);
 }
 
 void LEDTask2(PTASKPARM p)

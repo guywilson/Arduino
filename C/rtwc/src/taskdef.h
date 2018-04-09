@@ -4,5 +4,6 @@
 #define TASK_LED1				0x0100
 #define TASK_LED2				0x0101
 #define TASK_RXCMD				0x0200
+#define TASK_ADC				0x0400
 
 #endif

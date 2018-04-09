@@ -9,9 +9,7 @@ void RxCmdTask(PTASKPARM p)
 	RX_CMD * cmd = (RX_CMD *)p;
 	
 	processCommand(
-		cmd->messageID, 
 		cmd->command, 
 		cmd->message, 
-		cmd->dataLength, 
 		cmd->errorState);
 }
