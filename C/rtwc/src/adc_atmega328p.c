@@ -14,10 +14,17 @@ uint32_t conversionCount = 0L;
 
 void setupADC(void)
 {
+	cli();
+	
+	ADMUX	= _BV(REFS0) | _BV(ADLAR) | ADC_CHANNEL0;
+	ADCSRA	= _BV(ADEN) | _BV(ADIE) | ADC_PRESCALER_DIV16;
+	
 	sei();
 	
-	ADMUX	= _BV(REFS1) | _BV(REFS0) | _BV(ADLAR) | ADC_CHANNEL0;
-	ADCSRA	= _BV(ADEN) | _BV(ADIE) | _BV(ADSC) | ADC_PRESCALER_DIV16;
+	/*
+	** Trigger first conversion...
+	*/
+	ADCSRA |= _BV(ADSC);
 }
 
 /*

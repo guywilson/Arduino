@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 
 #include "scheduler.h"
 #include "taskdef.h"
@@ -36,7 +37,7 @@ int main(void)
 {
 	setup();
 	
-	scheduleTask(TASK_LED1, 1000, NULL);
+	scheduleTask(TASK_LED1, 950, NULL);
 	//scheduleTask(TASK_LED2, 75, NULL);
 
 	/*

@@ -14,7 +14,7 @@ void LEDTask1(PTASKPARM p)
 		/* set pin 5 low to turn led off */
 		PORTB &= ~LED_ONBOARD;
         on = 0;
-		scheduleTask(TASK_LED1, 1000, NULL);
+		scheduleTask(TASK_LED1, 950, NULL);
     }
     else {
 		/* set pin 5 high to turn led on */

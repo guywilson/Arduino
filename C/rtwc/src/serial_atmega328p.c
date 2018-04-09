@@ -10,6 +10,7 @@
 #include "scheduler.h"
 #include "taskdef.h"
 #include "serial_atmega328p.h"
+#include "rxtxmsgdef.h"
 #include "rxcmdtask.h"
 #include "adctask.h"
 
@@ -119,6 +120,7 @@ void buildWeatherResponse()
 void respondADC(uint8_t * data, uint8_t length)
 {
 	int				i;
+	int				j;
 	uint16_t		adcResult;
 	uint8_t			channel = data[0] - 0x30;
 	
@@ -129,8 +131,14 @@ void respondADC(uint8_t * data, uint8_t length)
 	
 	adcResult = getADCAverage(channel);
 	
+	j = 0;
+	
+	/*
+	** Print the ADC result to the Tx buffer in binary...
+	*/
 	for (i = 13;i > 3;i--) {
-		txBuffer[i] = ((adcResult >> (i - 4)) & 0x01) + 0x30;  // '0' or '1'
+		txBuffer[i] = ((adcResult >> j) & 0x01) + 0x30;  // '0' or '1'
+		j++;
 	}
 	
 	txBuffer[14] = MSG_FINISH;
