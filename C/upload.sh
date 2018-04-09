@@ -1,6 +1,7 @@
 #!/bin/bash
 
-SERIALPORT=/dev/cu.wchusbserial1410
+TARGET=$1
+SERIALPORT=$2
 BAUDRATE=57600
 
-avrdude -v -patmega328p -carduino -P$SERIALPORT -b$BAUDRATE -D -Uflash:w:$1:i
+avrdude -v -patmega328p -carduino -P$SERIALPORT -b$BAUDRATE -D -Uflash:w:$TARGET:i
