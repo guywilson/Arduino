@@ -19,6 +19,9 @@ ELF=$(PROJNAME).elf
 # What is our target
 TARGET=$(PROJNAME).hex
 
+# Port we use to upload the tearget to the device
+UPLOADPORT=/dev/cu.wchusbserial1420
+
 # C compiler
 C=avr-gcc
 
@@ -36,7 +39,7 @@ LFLAGS=-w -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=atmega328p
 SCHEDOBJ=$(BUILD)/scheduler.o
 
 # Object files
-OBJFILES=$(SCHEDOBJ) $(BUILD)/led_utils.o $(BUILD)/ledtask.o $(BUILD)/rxcmdtask.o $(BUILD)/rtc_atmega328p.o $(BUILD)/serial_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/main.o
+OBJFILES=$(SCHEDOBJ) $(BUILD)/led_utils.o $(BUILD)/ledtask.o $(BUILD)/rxcmdtask.o $(BUILD)/adctask.o $(BUILD)/rtc_atmega328p.o $(BUILD)/serial_atmega328p.o $(BUILD)/adc_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/main.o
 
 # Target
 all: $(TARGET)
@@ -63,10 +66,16 @@ $(BUILD)/ledtask.o: $(SRC)/ledtask.c $(SRC)/ledtask.h $(SRC)/led_utils.h $(SRC)/
 $(BUILD)/rxcmdtask.o: $(SRC)/rxcmdtask.c $(SRC)/rxcmdtask.h $(SRC)/led_utils.h $(SRC)/scheduler.h
 	$(C) $(CFLAGS) -o $(BUILD)/rxcmdtask.o $(SRC)/rxcmdtask.c
 
+$(BUILD)/adctask.o: $(SRC)/adctask.c $(SRC)/adctask.h $(SRC)/scheduler.h
+	$(C) $(CFLAGS) -o $(BUILD)/adctask.o $(SRC)/adctask.c
+
 $(BUILD)/rtc_atmega328p.o: $(SRC)/rtc_atmega328p.c $(SRC)/rtc_atmega328p.h
 	$(C) $(CFLAGS) -o $(BUILD)/rtc_atmega328p.o $(SRC)/rtc_atmega328p.c
 
-$(BUILD)/serial_atmega328p.o: $(SRC)/serial_atmega328p.c $(SRC)/serial_atmega328p.h $(SRC)/scheduler.h
+$(BUILD)/adc_atmega328p.o: $(SRC)/adc_atmega328p.c $(SRC)/adc_atmega328p.h
+	$(C) $(CFLAGS) -o $(BUILD)/adc_atmega328p.o $(SRC)/adc_atmega328p.c
+
+$(BUILD)/serial_atmega328p.o: $(SRC)/serial_atmega328p.c $(SRC)/serial_atmega328p.h $(SRC)/rxtxmsgdef.h $(SRC)/scheduler.h
 	$(C) $(CFLAGS) -o $(BUILD)/serial_atmega328p.o $(SRC)/serial_atmega328p.c
 
 $(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/ledtask.h $(SRC)/rxcmdtask.h $(SRC)/taskdef.h
@@ -82,4 +91,4 @@ $(TARGET): $(BUILD)/$(ELF)
 	avr-objcopy -O ihex -R .eeprom $(BUILD)/$(ELF) $(TARGET)
 
 install: $(TARGET)
-	../upload.sh $(TARGET)
+	../upload.sh $(TARGET) $(UPLOADPORT)
