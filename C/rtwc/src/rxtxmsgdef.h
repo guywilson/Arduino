@@ -8,7 +8,7 @@
 * Offset (HEX)	Offset (DEC)	Length		Description
 * ------------	------------	------		-----------------------------------
 *   0x00		  0				  1			Start byte (0x3C) '<'
-*   0x01		  1				  1			Padding, set to 0x20 (32) - space
+*   0x01		  1				  1			Padding, set to 0x24 (36) '$'
 *	0x02		  2				  1			Command
 *   0x03		  3				 60 (max)	Data - Length defined by command/response
 *   0x3F		 63				  1			Finish byte (0x3E) '>'
@@ -42,7 +42,7 @@
 
 #define MSG_START					0x3C		// '<'
 #define MSG_FINISH					0x3E		// '>'
-#define MSG_PADDING					0x20		// ' '
+#define MSG_PADDING					0x24		// '$'
 
 #define MAX_MESSAGE_LENGTH			 60
 #define MAX_PACKET_LENGTH			MAX_MESSAGE_LENGTH + 4

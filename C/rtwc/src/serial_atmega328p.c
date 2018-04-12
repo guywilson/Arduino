@@ -93,10 +93,11 @@ void respondAck()
 {
 	txBuffer[0] = MSG_START;
 	txBuffer[1] = MSG_PADDING;
-	txBuffer[2] = RESPONSE_ACK;
-	txBuffer[3] = MSG_FINISH;
+	txBuffer[2] = 'O';
+	txBuffer[3] = 'K';
+	txBuffer[4] = MSG_FINISH;
 	
-	txLength = 4;
+	txLength = 5;
 	
 	// Start transmission by setting tx register...
 	UDR0 = getNextTxByte(1);

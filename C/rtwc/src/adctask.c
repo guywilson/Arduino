@@ -12,29 +12,44 @@ uint16_t		adcResultsCH1[ADC_RESULT_ARRAY_SIZE];
 uint8_t			resultPtrCH0 = 0;
 uint8_t			resultPtrCH1 = 0;
 
+uint8_t			conversionCount = 0;
 
 void ADCTask(PTASKPARM p)
 {
-	PADCRESULT r = (PADCRESULT)p;
+	PADCRESULT r =		(PADCRESULT)p;
+
+	/*
+	** Recommended that the first conversion result for each channel
+	** is ignored as it is likely to be innacurate...
+	*/
+	if (conversionCount < ADC_USED_CHANNELS) {
+		conversionCount++;
+	}
+	else {
+		if (r->channel == ADC_CHANNEL0) {
+			adcResultsCH0[resultPtrCH0] = r->result;
+
+			resultPtrCH0++;
+
+			if (resultPtrCH0 == ADC_RESULT_ARRAY_SIZE) {
+				resultPtrCH0 = 0;
+			}
+		}
+		else if (r->channel == ADC_CHANNEL1) {
+			adcResultsCH1[resultPtrCH1] = r->result;
+
+			resultPtrCH1++;
+
+			if (resultPtrCH1 == ADC_RESULT_ARRAY_SIZE) {
+				resultPtrCH1 = 0;
+			}
+		}
+	}
 	
-	if (r->channel == ADC_CHANNEL0) {
-		adcResultsCH0[resultPtrCH0] = r->result;
-		
-		resultPtrCH0++;
-		
-		if (resultPtrCH0 == ADC_RESULT_ARRAY_SIZE) {
-			resultPtrCH0 = 0;
-		}
-	}
-	else if (r->channel == ADC_CHANNEL1) {
-		adcResultsCH1[resultPtrCH1] = r->result;
-		
-		resultPtrCH1++;
-		
-		if (resultPtrCH1 == ADC_RESULT_ARRAY_SIZE) {
-			resultPtrCH1 = 0;
-		}
-	}
+	/*
+	** Trigger next conversion...
+	*/
+	ADCSRA |= _BV(ADSC);
 }
 
 uint16_t getADCAverage(uint8_t channel)
