@@ -23,8 +23,7 @@ void setup()
 
 	initScheduler();
 	
-	registerTask(TASK_LED1, &LEDTask1);
-	registerTask(TASK_LED2, &LEDTask2);
+	registerTask(TASK_HEARTBEAT, &HeartbeatTask);
 	registerTask(TASK_RXCMD, &RxCmdTask);
 	registerTask(TASK_ADC, &ADCTask);
 	
@@ -37,8 +36,7 @@ int main(void)
 {
 	setup();
 	
-	scheduleTask(TASK_LED1, 950, NULL);
-	//scheduleTask(TASK_LED2, 75, NULL);
+	scheduleTask(TASK_HEARTBEAT, 950, NULL);
 
 	/*
 	** Start the scheduler...
