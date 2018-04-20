@@ -24,5 +24,6 @@
 #define ADC_USED_CHANNELS			2
 
 void setupADC(void);
+void triggerADC(void);
 
 #endif

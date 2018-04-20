@@ -29,6 +29,12 @@
 #define COMMAND_ADC					0x33		// '3'
 #define COMMAND_ADC_LENGTH			1
 
+#define COMMAND_AVG_WIND_SPEED		0x34		// '4'
+#define COMMAND_AVG_WIND_SPEED_LEN	0
+
+#define COMMAND_MAX_WIND_SPEED		0x35		// '5'
+#define COMMAND_MAX_WIND_SPEED_LEN	0
+
 
 #define RESPONSE_ACK				0x41		// 'A'
 #define RESPONSE_ACK_LENGTH			0
@@ -39,6 +45,7 @@
 #define RESPONSE_ADC				0x43		// 'C'
 #define RESPONSE_ADC_LENGTH			11			// 10-bit result + channel num 
 
+#define RESPONSE_AVG_WIND_SPEED		0x44		// 'D'
 
 #define MSG_START					0x3C		// '<'
 #define MSG_FINISH					0x3E		// '>'

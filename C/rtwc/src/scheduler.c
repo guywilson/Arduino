@@ -2,10 +2,8 @@
 #include <avr/io.h>
 
 #include "scheduler.h"
-#include "ledtask.h"
 #include "rtc_atmega328p.h"
 #include "error.h"
-#include "led_utils.h"
 
 typedef struct
 {

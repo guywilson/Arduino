@@ -10,13 +10,12 @@ static volatile ADCRESULT			adcr;
 
 void setupADC(void)
 {
-	cli();
-	
 	ADMUX	= _BV(REFS0) | _BV(ADLAR) | ADC_CHANNEL0;
 	ADCSRA	= _BV(ADEN) | _BV(ADIE) | ADC_PRESCALER_DIV16;
-	
-	sei();
-	
+}
+
+void triggerADC(void)
+{
 	/*
 	** Trigger first conversion...
 	*/

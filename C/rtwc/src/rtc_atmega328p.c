@@ -7,9 +7,6 @@ volatile uint32_t		_realTimeClock = 0L;
 
 void setupRTC()
 {
-    //stop interrupts
-    cli();
-    
     // Clear registers
     TCCR1A = 0x00;
     TCCR1B = 0x00;
@@ -32,9 +29,6 @@ void setupRTC()
     
     // enable timer compare interrupt
     TIMSK1 |= (1 << OCIE1A);
-    
-    // enable interrupts
-    sei();
 }
 
 uint32_t getCurrentTime()

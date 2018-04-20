@@ -21,9 +21,6 @@ volatile uint8_t			txLength = 0;
 
 void setupSerial()
 {
-    //stop interrupts
-    cli();
-
 	UBRR0H = UBRRH_VALUE;
 	UBRR0L = UBRRL_VALUE;
 
@@ -43,9 +40,6 @@ void setupSerial()
 	** Enable Rx & Tx interrupts
 	*/
 	UCSR0B = _BV(RXEN0) | _BV(TXEN0) | _BV(RXCIE0) | _BV(TXCIE0);
-    
-    // enable interrupts
-    sei();
 }
 
 void enableTxInterrupt()
@@ -141,6 +135,31 @@ void respondADC(uint8_t * data, uint8_t length)
 		txBuffer[i] = ((adcResult >> j) & 0x01) + 0x30;  // '0' or '1'
 		j++;
 	}
+	
+	txBuffer[14] = MSG_FINISH;
+	
+	txLength = 15;
+	
+	// Start transmission by setting tx register...
+	UDR0 = getNextTxByte(1);
+	
+	enableTxInterrupt();
+}
+
+void respondAvgWindSpeed(void)
+{
+	int				i;
+	int				j;
+	float			avgSpeed;
+	
+	txBuffer[0] = MSG_START;
+	txBuffer[1] = MSG_PADDING;
+	txBuffer[2] = RESPONSE_AVG_WIND_SPEED;
+	//txBuffer[3] = data[0];
+	
+	avgSpeed = getAvgWindSpeed();
+	
+	j = 0;
 	
 	txBuffer[14] = MSG_FINISH;
 	
@@ -289,6 +308,10 @@ void processCommand(
 			
 		case COMMAND_ADC:
 			respondADC(message, COMMAND_ADC_LENGTH);
+			break;
+			
+		case COMMAND_AVG_WIND_SPEED:
+			respondAvgWindSpeed();
 			break;
 	}
 }
