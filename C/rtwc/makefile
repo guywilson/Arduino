@@ -22,7 +22,7 @@ BUILD=build
 SRC=src
 
 # Port we use to upload the tearget to the device
-UPLOADPORT=/dev/cu.wchusbserial1420
+UPLOADPORT=/dev/cu.wchusbserial1410
 
 # C compiler
 CC=avr-gcc
@@ -40,7 +40,7 @@ SIZETOOL=avr-size
 UPLOADTOOL=../upload.sh
 
 # C compiler flags
-CFLAGS=-c -Os -Wall -w -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=$(DEVICE) -DF_CPU=16000000L -DARDUINO=10804 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR
+CFLAGS=-c -O3 -Wall -w -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=$(DEVICE) -DF_CPU=16000000L -DARDUINO=10804 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR
 
 # Linker flags
 LFLAGS=-w -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=$(DEVICE)
@@ -55,7 +55,7 @@ SFLAGS=-C --mcu=$(DEVICE)
 SCHEDOBJ=$(BUILD)/scheduler.o
 
 # Object files
-OBJFILES=$(SCHEDOBJ) $(BUILD)/led_utils.o $(BUILD)/ledtask.o $(BUILD)/rxcmdtask.o $(BUILD)/adctask.o $(BUILD)/rtc_atmega328p.o $(BUILD)/serial_atmega328p.o $(BUILD)/adc_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/main.o
+OBJFILES=$(SCHEDOBJ) $(BUILD)/led_utils.o $(BUILD)/heartbeat.o $(BUILD)/rxcmdtask.o $(BUILD)/adctask.o $(BUILD)/anonometer.o $(BUILD)/rainguage.o $(BUILD)/rtc_atmega328p.o $(BUILD)/serial_atmega328p.o $(BUILD)/adc_atmega328p.o $(BUILD)/int_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/main.o
 
 # Target
 all: $(TARGET)
@@ -76,29 +76,38 @@ $(BUILD)/scheduler.o: $(SRC)/scheduler.c $(SRC)/scheduler.h $(SRC)/error.h
 $(BUILD)/led_utils.o: $(SRC)/led_utils.c $(SRC)/led_utils.h
 	$(CC) $(CFLAGS) -o $(BUILD)/led_utils.o $(SRC)/led_utils.c
 
-$(BUILD)/ledtask.o: $(SRC)/ledtask.c $(SRC)/ledtask.h $(SRC)/led_utils.h $(SRC)/scheduler.h
-	$(CC) $(CFLAGS) -o $(BUILD)/ledtask.o $(SRC)/ledtask.c
+$(BUILD)/heartbeat.o: $(SRC)/heartbeat.c $(SRC)/heartbeat.h $(SRC)/led_utils.h $(SRC)/scheduler.h $(SRC)/taskdef.h
+	$(CC) $(CFLAGS) -o $(BUILD)/heartbeat.o $(SRC)/heartbeat.c
 
-$(BUILD)/rxcmdtask.o: $(SRC)/rxcmdtask.c $(SRC)/rxcmdtask.h $(SRC)/led_utils.h $(SRC)/scheduler.h
+$(BUILD)/rxcmdtask.o: $(SRC)/rxcmdtask.c $(SRC)/rxcmdtask.h $(SRC)/led_utils.h $(SRC)/scheduler.h $(SRC)/serial_atmega328p.h
 	$(CC) $(CFLAGS) -o $(BUILD)/rxcmdtask.o $(SRC)/rxcmdtask.c
 
-$(BUILD)/adctask.o: $(SRC)/adctask.c $(SRC)/adctask.h $(SRC)/scheduler.h
+$(BUILD)/adctask.o: $(SRC)/adctask.c $(SRC)/adctask.h $(SRC)/scheduler.h $(SRC)/taskdef.h $(SRC)/adc_atmega328p.h
 	$(CC) $(CFLAGS) -o $(BUILD)/adctask.o $(SRC)/adctask.c
+
+$(BUILD)/anonometer.o: $(SRC)/anonometer.c $(SRC)/anonometer.h $(SRC)/int_atmega328p.h $(SRC)/kphlookup.h $(SRC)/taskdef.h $(SRC)/scheduler.h
+	$(CC) $(CFLAGS) -o $(BUILD)/anonometer.o $(SRC)/anonometer.c
+
+$(BUILD)/rainguage.o: $(SRC)/rainguage.c $(SRC)/rainguage.h $(SRC)/rainfall.h $(SRC)/int_atmega328p.h $(SRC)/taskdef.h $(SRC)/scheduler.h
+	$(CC) $(CFLAGS) -o $(BUILD)/rainguage.o $(SRC)/rainguage.c
 
 $(BUILD)/rtc_atmega328p.o: $(SRC)/rtc_atmega328p.c $(SRC)/rtc_atmega328p.h
 	$(CC) $(CFLAGS) -o $(BUILD)/rtc_atmega328p.o $(SRC)/rtc_atmega328p.c
 
-$(BUILD)/adc_atmega328p.o: $(SRC)/adc_atmega328p.c $(SRC)/adc_atmega328p.h
+$(BUILD)/adc_atmega328p.o: $(SRC)/adc_atmega328p.c $(SRC)/adc_atmega328p.h $(SRC)/scheduler.h $(SRC)/adctask.h $(SRC)/taskdef.h
 	$(CC) $(CFLAGS) -o $(BUILD)/adc_atmega328p.o $(SRC)/adc_atmega328p.c
 
-$(BUILD)/serial_atmega328p.o: $(SRC)/serial_atmega328p.c $(SRC)/serial_atmega328p.h $(SRC)/rxtxmsgdef.h $(SRC)/scheduler.h
-	$(CC) $(CFLAGS) -o $(BUILD)/serial_atmega328p.o $(SRC)/serial_atmega328p.c
+$(BUILD)/int_atmega328p.o: $(SRC)/int_atmega328p.c $(SRC)/int_atmega328p.h
+	$(CC) $(CFLAGS) -o $(BUILD)/int_atmega328p.o $(SRC)/int_atmega328p.c
 
-$(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/ledtask.h $(SRC)/rxcmdtask.h $(SRC)/taskdef.h
-	$(CC) $(CFLAGS) -o $(BUILD)/main.o $(SRC)/main.c
+$(BUILD)/serial_atmega328p.o: $(SRC)/serial_atmega328p.c $(SRC)/serial_atmega328p.h $(SRC)/rxtxmsgdef.h $(SRC)/scheduler.h $(SRC)/taskdef.h $(SRC)/rxcmdtask.h $(SRC)/adctask.h
+	$(CC) $(CFLAGS) -o $(BUILD)/serial_atmega328p.o $(SRC)/serial_atmega328p.c
 
 $(BUILD)/error_atmega328p.o: $(SRC)/error_atmega328p.c $(SRC)/error.h $(SRC)/led_utils.h
 	$(CC) $(CFLAGS) -o $(BUILD)/error_atmega328p.o $(SRC)/error_atmega328p.c
+
+$(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/heartbeat.h $(SRC)/adctask.h $(SRC)/anonometer.h $(SRC)/rainguage.h $(SRC)/rxcmdtask.h $(SRC)/taskdef.h $(SRC)/rtc_atmega328p.h $(SRC)/adc_atmega328p.h $(SRC)/int_atmega328p.h $(SRC)/error.h
+	$(CC) $(CFLAGS) -o $(BUILD)/main.o $(SRC)/main.c
 
 ###############################################################################
 #
