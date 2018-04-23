@@ -13,6 +13,7 @@
 #include "rxtxmsgdef.h"
 #include "rxcmdtask.h"
 #include "adctask.h"
+#include "utils.h"
 
 #include "led_utils.h"
 
@@ -149,21 +150,17 @@ void respondADC(uint8_t * data, uint8_t length)
 void respondAvgWindSpeed(void)
 {
 	int				i;
-	int				j;
-	float			avgSpeed;
+	int				strLen;
 	
 	txBuffer[0] = MSG_START;
 	txBuffer[1] = MSG_PADDING;
 	txBuffer[2] = RESPONSE_AVG_WIND_SPEED;
-	//txBuffer[3] = data[0];
 	
-	avgSpeed = getAvgWindSpeed();
+	strLen = doubleToString(&txBuffer[3], getAvgWindSpeed());
 	
-	j = 0;
+	txBuffer[strLen + 3] = MSG_FINISH;
 	
-	txBuffer[14] = MSG_FINISH;
-	
-	txLength = 15;
+	txLength = strLen + 4;
 	
 	// Start transmission by setting tx register...
 	UDR0 = getNextTxByte(1);

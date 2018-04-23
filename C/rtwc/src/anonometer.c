@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <avr/pgmspace.h>
 
 #include "scheduler.h"
 #include "int_atmega328p.h"
@@ -64,7 +65,7 @@ float getAvgWindSpeed(void)
 		avgRPS = KPH_LOOKUP_BUFFER_SIZE - 1;
 	}
 	
-	avgSpeed = kphLookup[avgRPS];
+	avgSpeed = pgm_read_float(&(kphLookup[avgRPS]));
 	
 	return avgSpeed;
 }
@@ -77,7 +78,7 @@ float getMaxWindSpeed(void)
 		maxRPS = KPH_LOOKUP_BUFFER_SIZE - 1;
 	}
 	
-	maxSpeed = kphLookup[maxRPS];
+	maxSpeed = pgm_read_float(&(kphLookup[maxRPS]));
 	
 	return maxSpeed;
 }

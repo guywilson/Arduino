@@ -1,3 +1,5 @@
+#include <avr/pgmspace.h>
+
 #ifndef _INCL_RAINFALL
 #define _INCL_RAINFALL
 
@@ -13,7 +15,9 @@
 
 /******************************************************************************
 **
-** Calculate the rainfall in mm for values of number of tips 
+** Calculate the rainfall in mm for values of number of tips. This is an
+** expensive operation on a microcontroller, hence we calcuate this at 
+** compile time and store in flash ROM.
 **
 ** (Tipping bucket volume (mm^3) x # tips) / Collecting funnel area (mm^2)
 **
@@ -26,8 +30,13 @@
 ** RAINFALL_LOOKUP_BUFFER_SIZE defines the number of slots in our lookup table, and
 ** therefore the maximum tph that is supported.
 **
+** This array of const values uses the PROGMEM modifier, a macro that forces
+** the compiler to keep this data within the flash ROM and not take up valuable
+** RAM space. To access values in the array, code must use the pgm_read_float()
+** macro to get the far pointer to the flash ROM.
+**
 ******************************************************************************/
-static float rainfallLookup[RAINFALL_LOOKUP_BUFFER_SIZE] =
+static const float rainfallLookup[RAINFALL_LOOKUP_BUFFER_SIZE] PROGMEM =
 {
 	0.0,
 	TIPS_TO_MM_SCALE_FACTOR,

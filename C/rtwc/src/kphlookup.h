@@ -1,3 +1,5 @@
+#include <avr/pgmspace.h>
+
 #ifndef _INCL_KPHLOOKUP
 #define _INCL_KPHLOOKUP
 
@@ -13,6 +15,8 @@
 /******************************************************************************
 **
 ** Calculate the wind speed in kph for values of revolutions per second (rps).
+** This is an expensive operation on a microcontroller, hence we calcuate this 
+** at compile time and store in flash ROM.
 **
 ** kph = (pi x diameter of anonometer (m) x rps x 3600) / 1000
 **
@@ -24,8 +28,13 @@
 ** KPH_LOOKUP_BUFFER_SIZE defines the number of slots in our lookup table, and
 ** therefore the maximum rps that is supported.
 **
+** This array of const values uses the PROGMEM modifier, a macro that forces
+** the compiler to keep this data within the flash ROM and not take up valuable
+** RAM space. To access values in the array, code must use the pgm_read_float()
+** macro to get the far pointer to the flash ROM.
+**
 ******************************************************************************/
-static float kphLookup[KPH_LOOKUP_BUFFER_SIZE] = 
+static const float kphLookup[KPH_LOOKUP_BUFFER_SIZE] PROGMEM = 
 {
 	0.0,
 	RPS_TO_KPH_SCALE_FACTOR,

@@ -5,6 +5,9 @@
 #include "rtc_atmega328p.h"
 #include "error.h"
 
+#define CHECK_TIMER_OVERFLOW
+#define MAX_TIMER_VALUE				0xFFFFFFFF
+
 typedef struct
 {
 	uint16_t		ID;
@@ -26,6 +29,37 @@ extern volatile uint32_t _realTimeClock;
 TASKDEF		taskDefs[MAX_TASKS];
 int			taskCount = 0;
 
+/******************************************************************************
+**
+** Calculate the scheduled time
+**
+** If we don't care about checking if the timer will overflow, use a macro
+** to calculate the default scheduled time.
+**
+******************************************************************************/
+#ifdef CHECK_TIMER_OVERFLOW
+uint32_t _getScheduledTime(uint32_t startTime, uint32_t requestedDelay)
+{
+	uint32_t		overflowTime;
+	
+	overflowTime = MAX_TIMER_VALUE - startTime;
+	
+	if (overflowTime < requestedDelay) {
+		return (requestedDelay - overflowTime);
+	}
+	else {
+		return (startTime + requestedDelay);
+	}
+}
+#else
+#define _getScheduledTime(startTime, requestedDelay)	(startTime + requestedDelay)
+#endif
+
+/******************************************************************************
+**
+** Public API functions
+**
+******************************************************************************/
 void initScheduler()
 {
 	int			i = 0;
@@ -107,7 +141,7 @@ void scheduleTask(uint16_t taskID, uint32_t time, PTASKPARM p)
 		if (td->ID == taskID) {
 			td->startTime = _realTimeClock;
 			td->delay = time;
-			td->scheduledTime = td->startTime + td->delay;
+			td->scheduledTime = _getScheduledTime(td->startTime, td->delay);
 			td->isScheduled = 1;
 			td->pParameter = p;
 			break;
@@ -125,7 +159,7 @@ void rescheduleTask(uint16_t taskID, PTASKPARM p)
 		
 		if (td->ID == taskID) {
 			td->startTime = _realTimeClock;
-			td->scheduledTime = td->startTime + td->delay;
+			td->scheduledTime = _getScheduledTime(td->startTime, td->delay);
 			td->isScheduled = 1;
 			td->pParameter = p;
 			break;
@@ -156,12 +190,25 @@ void schedule()
 	int			i = 0;
 	PTASKDEF	td = NULL;
 	
+	/*
+	** Scheduler loop, run forever waiting for tasks to be
+	** scheduled...
+	*/
 	while (1) {
 		td = &taskDefs[i];
 		
 		if (td->isScheduled && td->isAllocated) {
 			if (_realTimeClock >= td->scheduledTime) {
+				/*
+				** Mark the task as un-scheduled, so by default the
+				** task will not run again automatically. If the task
+				** reschedules itself, this flag will be reset to 1...
+				*/
 				td->isScheduled = 0;
+				
+				/*
+				** Run the task...
+				*/
 				td->run(td->pParameter);
 			}
 		}

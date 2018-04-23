@@ -6,5 +6,6 @@
 #define TASK_ADC				0x0400
 #define TASK_ANONOMETER			0x0800
 #define TASK_RAINGUAGE			0x0A00
+#define TASK_PWM				0xFF00
 
 #endif

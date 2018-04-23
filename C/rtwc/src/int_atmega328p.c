@@ -2,6 +2,7 @@
 #include <avr/interrupt.h>
 
 #include "int_atmega328p.h"
+#include "led_utils.h"
 
 volatile uint16_t counterINT0 = 0;
 volatile uint16_t counterINT1 = 0;
@@ -51,6 +52,7 @@ uint16_t getExternalInterruptCount(int intPin)
 ISR(INT0_vect, ISR_BLOCK)
 {
 	counterINT0++;
+	toggleLED(LED_ONBOARD);
 }
 
 ISR(INT1_vect, ISR_BLOCK)

@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #ifndef _INCL_SCHEDULER
 #define _INCL_SCHEDULER
 

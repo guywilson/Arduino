@@ -12,7 +12,9 @@
 
 #define		LED_ONBOARD			LED_PORT5
 
+void		setupLEDPin(void);
 void		turnOn(int LED_ID);
 void		turnOff(int LED_ID);
+void 		toggleLED(int LED_ID);
 
 #endif

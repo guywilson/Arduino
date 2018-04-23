@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <avr/pgmspace.h>
 
 #include "scheduler.h"
 #include "int_atmega328p.h"
@@ -65,7 +66,7 @@ float getAvgRainfall(void)
 		avgTPH = RAINFALL_LOOKUP_BUFFER_SIZE - 1;
 	}
 	
-	avgRainfall = rainfallLookup[avgTPH];
+	avgRainfall = pgm_read_float(&(rainfallLookup[avgTPH]));
 	
 	return avgRainfall;
 }
@@ -78,7 +79,15 @@ float getMaxRainfall(void)
 		maxTPH = RAINFALL_LOOKUP_BUFFER_SIZE - 1;
 	}
 	
-	maxRainfall = rainfallLookup[maxTPH];
+	maxRainfall = pgm_read_float(&(rainfallLookup[maxTPH]));
 	
 	return maxRainfall;
+}
+
+/*
+** Expensive operation, call at most once per day...
+*/
+float getTotalRainfall(void)
+{
+	return (TIPS_TO_MM_SCALE_FACTOR * totalTPH);
 }

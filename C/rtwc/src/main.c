@@ -9,23 +9,20 @@
 #include "adctask.h"
 #include "anonometer.h"
 #include "rainguage.h"
+#include "pwmtask.h"
 
+#include "led_utils.h"
 #include "rtc_atmega328p.h"
 #include "adc_atmega328p.h"
 #include "int_atmega328p.h"
+#include "pwm_atmega328p.h"
 #include "error.h"
 
-void setup()
+void setup(void)
 {
-    //stop interrupts
-    cli();
-
-	/* set pin 5 of PORTB for output*/
-    DDRB |= _BV(DDB5);
-
-    /* set pin 0 of PORTB for output*/
-    DDRB |= _BV(DDB0);
-
+	//stop interrupts
+	cli();
+	
 	initScheduler();
 	
 	registerTask(TASK_HEARTBEAT, &HeartbeatTask);
@@ -33,7 +30,9 @@ void setup()
 	registerTask(TASK_ADC, &ADCTask);
 	registerTask(TASK_ANONOMETER, &anonometerTask);
 	registerTask(TASK_RAINGUAGE, &rainGuageTask);
-	
+	registerTask(TASK_PWM, &PWMTask);
+
+	setupLEDPin();
 	setupRTC();
 	setupSerial();
 	setupADC();
@@ -42,6 +41,7 @@ void setup()
 	//enable interrupts
     sei();
 	
+	setupPWM();
 	triggerADC();
 }
 
@@ -51,12 +51,18 @@ int main(void)
 	
 	scheduleTask(TASK_HEARTBEAT, 950, NULL);
 	scheduleTask(TASK_ANONOMETER, 1000, NULL);
-	scheduleTask(TASK_RAINGUAGE, 3600000, NULL); // Schedule in an hour...
+	scheduleTask(TASK_RAINGUAGE, 3600000, NULL); // Schedule in 1 hour...
+	scheduleTask(TASK_PWM, 50, NULL);
 
 	/*
 	** Start the scheduler...
 	*/
 	schedule();
 	
+	/*
+	** Should never reach here...
+	*/
 	handleError(ERROR_SCHED_DROPOUT);
+	
+	return 0;
 }
