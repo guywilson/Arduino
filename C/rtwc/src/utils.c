@@ -78,6 +78,61 @@ int doubleToString(char * dest, double value)
 }
 
 /*
+** Supports positive 16-bit integers up to 65535
+*/
+int uint16ToString(char * dest, uint16_t value)
+{
+	int				i;
+	int				strLen;
+
+	if (value > 10000) {
+		strLen = 5;
+	}
+	else if (value > 1000) {
+		strLen = 4;
+	}
+	else if (value > 100) {
+		strLen = 3;
+	}
+	else if (value > 10) {
+		strLen = 2;
+	}
+	else if (value >= 1) {
+		strLen = 1;
+	}
+	else {
+		strLen = 1;
+		dest[0] = '0';
+	}
+
+	i = strLen - 1;
+	
+	while (value > 0) {
+		dest[i] = (value % 10) + '0';
+		value /= 10;
+		
+		i--;
+	}
+	
+	dest[strLen] = 0;
+	
+	return strLen;
+}
+
+void uint16ToBinaryString(char * dest, uint16_t value)
+{
+	int			i = 15;
+	
+	while (i >= 0) {
+		dest[i] = ((char)(value & 0x0001)) + '0';
+		value = value >> 1;
+		i--;
+	}
+	
+	dest[16] = 0;
+}
+
+/*
 ** Supports positive 32-bit integers up to 4 294 967 295
 */
 int uint32ToString(char * dest, uint32_t value)
@@ -132,4 +187,17 @@ int uint32ToString(char * dest, uint32_t value)
 	dest[strLen] = 0;
 	
 	return strLen;
+}
+
+void uint32ToBinaryString(char * dest, uint32_t value)
+{
+	int			i = 31;
+	
+	while (i >= 0) {
+		dest[i] = ((char)(value & 0x00000001)) + '0';
+		value = value >> 1;
+		i--;
+	}
+	
+	dest[32] = 0;
 }

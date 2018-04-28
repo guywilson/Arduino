@@ -6,7 +6,7 @@
 #include "taskdef.h"
 #include "adc_atmega328p.h"
 
-static volatile ADCRESULT			adcr;
+static ADCRESULT			adcr;
 
 void setupADC(void)
 {
@@ -56,5 +56,5 @@ ISR(ADC_vect, ISR_BLOCK)
 	** This will fill the moving average buffer for each 
 	** channel every 2 seconds...
 	*/
-	scheduleTask(TASK_ADC, 125, &adcr);
+	scheduleTask(TASK_ADC, 125, (PTASKPARM)&adcr);
 }

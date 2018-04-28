@@ -16,17 +16,9 @@
 
 void setupSerial();
 
-void processCommand(
-			uint8_t		command,
-			uint8_t * 	message, 
-			uint8_t 	errorState);
+void enableTxInterrupt();
+void disableTxInterrupt();
 
-uint8_t getNextTxByte(uint8_t isInit);
-uint8_t getTxMessageLength();
-
-void debug(uint32_t count);
-
-void handleRxInterrupt();
-void handleTxInterrupt();
+void txstr(char * pszData, uint8_t dataLength);
 
 #endif

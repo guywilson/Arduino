@@ -4,7 +4,7 @@
 
 #include "pwm_atmega328p.h"
 
-int16_t		pwmDutyCycle = 0;
+int16_t		pwmDutyCycle = 16;
 
 void setupPWM(void)
 {
@@ -38,7 +38,7 @@ void increasePWMOnTime(uint8_t amount)
 	pwmDutyCycle += amount;
 	
 	if (pwmDutyCycle >= 255) {
-		pwmDutyCycle == 255;
+		pwmDutyCycle = 255;
 	}
 	
 	OCR0A = pwmDutyCycle;
@@ -48,8 +48,8 @@ void decreasePWMOnTime(uint8_t amount)
 {
 	pwmDutyCycle -= amount;
 	
-	if (pwmDutyCycle <= 0) {
-		pwmDutyCycle == 0;
+	if (pwmDutyCycle <= 16) {
+		pwmDutyCycle = 16;
 	}
 	
 	OCR0A = pwmDutyCycle;

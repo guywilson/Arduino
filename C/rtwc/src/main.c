@@ -5,7 +5,7 @@
 #include "scheduler.h"
 #include "taskdef.h"
 #include "heartbeat.h"
-#include "rxcmdtask.h"
+#include "serialcmd.h"
 #include "adctask.h"
 #include "anonometer.h"
 #include "rainguage.h"
@@ -16,6 +16,7 @@
 #include "adc_atmega328p.h"
 #include "int_atmega328p.h"
 #include "pwm_atmega328p.h"
+#include "serial_atmega328p.h"
 #include "error.h"
 
 void setup(void)
@@ -49,7 +50,7 @@ int main(void)
 {
 	setup();
 	
-	scheduleTask(TASK_HEARTBEAT, 950, NULL);
+	scheduleTask(TASK_HEARTBEAT, 2950, NULL);
 	scheduleTask(TASK_ANONOMETER, 1000, NULL);
 	scheduleTask(TASK_RAINGUAGE, 3600000, NULL); // Schedule in 1 hour...
 	scheduleTask(TASK_PWM, 50, NULL);

@@ -32,7 +32,7 @@ void setupExternalInterrupts(void)
 
 uint16_t getExternalInterruptCount(int intPin)
 {
-	uint16_t		count;
+	uint16_t		count = 0;
 	
 	switch (intPin) {
 		case INT_PIN_0:
@@ -52,7 +52,7 @@ uint16_t getExternalInterruptCount(int intPin)
 ISR(INT0_vect, ISR_BLOCK)
 {
 	counterINT0++;
-	toggleLED(LED_ONBOARD);
+	//toggleLED(LED_ONBOARD);
 }
 
 ISR(INT1_vect, ISR_BLOCK)

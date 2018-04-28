@@ -1,5 +1,5 @@
 #ifndef BAUD
-#define BAUD		115200
+#define BAUD		57600
 #endif
 
 #include <stdint.h>
@@ -9,16 +9,11 @@
 
 #include "scheduler.h"
 #include "taskdef.h"
-#include "serial_atmega328p.h"
 #include "rxtxmsgdef.h"
-#include "rxcmdtask.h"
-#include "adctask.h"
-#include "utils.h"
+#include "serial_atmega328p.h"
 
-#include "led_utils.h"
-
-volatile uint8_t			txBuffer[64];
-volatile uint8_t			txLength = 0;
+uint8_t			txBuffer[64];
+uint8_t			txLength = 0;
 
 void setupSerial()
 {
@@ -61,15 +56,16 @@ void disableTxInterrupt()
 
 uint8_t getNextTxByte(uint8_t isInit)
 {
-	static uint8_t		index = 0;
+	static uint8_t		i = 0;
 	uint8_t				rtn;
 	
 	if (isInit) {
-		index = 0;
+		i = 0;
 	}
 	
-	if (index < txLength) {
-		rtn = txBuffer[index++];
+	if (i < txLength) {
+		rtn = txBuffer[i];
+		i++;
 	}
 	else {
 		rtn = 0;
@@ -79,117 +75,29 @@ uint8_t getNextTxByte(uint8_t isInit)
 	return rtn;
 }
 
-uint8_t getTxMessageLength()
+void txstr(char * pszData, uint8_t dataLength)
 {
-	return txLength;
-}
-
-void respondAck()
-{
-	txBuffer[0] = MSG_START;
-	txBuffer[1] = MSG_PADDING;
-	txBuffer[2] = 'O';
-	txBuffer[3] = 'K';
-	txBuffer[4] = MSG_FINISH;
-	
-	txLength = 5;
-	
-	// Start transmission by setting tx register...
-	UDR0 = getNextTxByte(1);
-	
-	enableTxInterrupt();
-}
-
-void buildWeatherResponse()
-{
-	txBuffer[0] = MSG_START;
-	txBuffer[1] = MSG_PADDING;
-	txBuffer[3] = RESPONSE_ACK;
-	txBuffer[4] = MSG_FINISH;
-	
-	txLength = 4;
-	
-	// Start transmission by setting tx register...
-	UDR0 = getNextTxByte(1);
-}
-
-void respondADC(uint8_t * data, uint8_t length)
-{
-	int				i;
-	int				j;
-	uint16_t		adcResult;
-	uint8_t			channel = data[0] - 0x30;
-	
-	txBuffer[0] = MSG_START;
-	txBuffer[1] = MSG_PADDING;
-	txBuffer[2] = RESPONSE_ADC;
-	txBuffer[3] = data[0];
-	
-	adcResult = getADCAverage(channel);
-	
-	j = 0;
-	
-	/*
-	** Print the ADC result to the Tx buffer in binary...
-	*/
-	for (i = 13;i > 3;i--) {
-		txBuffer[i] = ((adcResult >> j) & 0x01) + 0x30;  // '0' or '1'
-		j++;
-	}
-	
-	txBuffer[14] = MSG_FINISH;
-	
-	txLength = 15;
-	
-	// Start transmission by setting tx register...
-	UDR0 = getNextTxByte(1);
-	
-	enableTxInterrupt();
-}
-
-void respondAvgWindSpeed(void)
-{
-	int				i;
-	int				strLen;
-	
-	txBuffer[0] = MSG_START;
-	txBuffer[1] = MSG_PADDING;
-	txBuffer[2] = RESPONSE_AVG_WIND_SPEED;
-	
-	strLen = doubleToString(&txBuffer[3], getAvgWindSpeed());
-	
-	txBuffer[strLen + 3] = MSG_FINISH;
-	
-	txLength = strLen + 4;
-	
-	// Start transmission by setting tx register...
-	UDR0 = getNextTxByte(1);
-	
-	enableTxInterrupt();
-}
-
-void debug(uint32_t count)
-{
-	char		out[16];
 	int			i;
-	uint32_t	j = 10;
-	int			k = 0;
 	
-	txBuffer[0] = MSG_START;
-	
-	for (i = 10;i > 0;i--) {
-		txBuffer[i] = count % j;
-		count = count / j;
-		
-		j = j * 10;
+	if (dataLength > 64) {
+		dataLength = 64;
 	}
 	
-	txBuffer[11] = MSG_FINISH;
+	for (i = 0;i < dataLength;i++) {
+		txBuffer[i] = pszData[i];
+	}
+	
+	txLength = dataLength;
 	
 	UDR0 = getNextTxByte(1);
+	
+	enableTxInterrupt();
 }
 
-void handleRxInterrupt()
+/*
+** Rx Complete Interrupt Handler
+*/
+ISR(USART_RX_vect, ISR_BLOCK)
 {
 	static uint8_t 		message[MAX_MESSAGE_LENGTH];
 	static uint8_t		state = STATE_START;
@@ -263,12 +171,15 @@ void handleRxInterrupt()
 			rxParms.message		= message;
 			rxParms.errorState	= errorState;
 
-			scheduleTask(TASK_RXCMD, 10, &rxParms);
+			scheduleTask(TASK_RXCMD, 1, &rxParms);
 			break;
 	}
 }
 
-void handleTxInterrupt()
+/*
+** Tx Complete (Data Register Empty) Interrupt Handler
+*/
+ISR(USART_UDRE_vect, ISR_BLOCK)
 {
 	uint8_t		b;
 	
@@ -277,54 +188,4 @@ void handleTxInterrupt()
 	if (b != 0) {
 		UDR0 = b;
 	}
-}
-
-void processCommand(
-		uint8_t		command,
-		uint8_t * 	message, 
-		uint8_t 	errorState)
-{
-	switch (command) {
-		case COMMAND_PING:
-			respondAck();
-			break;
-			
-		case COMMAND_WEATHER:
-			buildWeatherResponse();
-			break;
-			
-		case COMMAND_LEDON:
-			turnOn(LED_PORT0);
-			respondAck();
-			break;
-			
-		case COMMAND_LEDOFF:
-			turnOff(LED_PORT0);
-			respondAck();
-			break;
-			
-		case COMMAND_ADC:
-			respondADC(message, COMMAND_ADC_LENGTH);
-			break;
-			
-		case COMMAND_AVG_WIND_SPEED:
-			respondAvgWindSpeed();
-			break;
-	}
-}
-
-/*
-** Rx Complete Interrupt Handler
-*/
-ISR(USART_RX_vect, ISR_BLOCK)
-{
-	handleRxInterrupt();
-}
-
-/*
-** Tx Complete (Data Register Empty) Interrupt Handler
-*/
-ISR(USART_UDRE_vect, ISR_BLOCK)
-{
-	handleTxInterrupt();
 }

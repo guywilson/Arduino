@@ -35,6 +35,12 @@
 #define COMMAND_MAX_WIND_SPEED		0x35		// '5'
 #define COMMAND_MAX_WIND_SPEED_LEN	0
 
+#define COMMAND_AVG_RAINFALL		0x36		// '6'
+#define COMMAND_AVG_RAINFALL_LEN	0
+
+#define COMMAND_MAX_RAINFALL		0x37		// '7'
+#define COMMAND_MAX_RAINFALL_LEN	0
+
 
 #define RESPONSE_ACK				0x41		// 'A'
 #define RESPONSE_ACK_LENGTH			0
@@ -46,6 +52,10 @@
 #define RESPONSE_ADC_LENGTH			11			// 10-bit result + channel num 
 
 #define RESPONSE_AVG_WIND_SPEED		0x44		// 'D'
+#define RESPONSE_MAX_WIND_SPEED		0x45		// 'E'
+
+#define RESPONSE_AVG_RAINFALL		0x46		// 'F'
+#define RESPONSE_MAX_RAINFALL		0x47		// 'G'
 
 #define MSG_START					0x3C		// '<'
 #define MSG_FINISH					0x3E		// '>'
@@ -53,5 +63,13 @@
 
 #define MAX_MESSAGE_LENGTH			 60
 #define MAX_PACKET_LENGTH			MAX_MESSAGE_LENGTH + 4
+
+typedef struct
+{
+	uint8_t		command;
+	uint8_t * 	message; 
+	uint8_t 	errorState;
+}
+RX_CMD;
 
 #endif

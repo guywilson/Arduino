@@ -197,8 +197,8 @@ void schedule()
 	while (1) {
 		td = &taskDefs[i];
 		
-		if (td->isScheduled && td->isAllocated) {
-			if (_realTimeClock >= td->scheduledTime) {
+		if (td->isAllocated) {
+			if (td->isScheduled && (_realTimeClock >= td->scheduledTime)) {
 				/*
 				** Mark the task as un-scheduled, so by default the
 				** task will not run again automatically. If the task

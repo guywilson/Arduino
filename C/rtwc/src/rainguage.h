@@ -7,5 +7,7 @@
 #define RAINGUAGE_AVG_COUNT				24
 
 void rainGuageTask(PTASKPARM p);
+float getAvgRainfall(void);
+float getMaxRainfall(void);
 
 #endif

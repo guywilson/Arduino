@@ -7,15 +7,15 @@
 #include "kphlookup.h"
 #include "anonometer.h"
 #include "taskdef.h"
+#include "utils.h"
+#include "serial_atmega328p.h"
 
+uint16_t	rpsBuffer[WIND_SPEED_AVG_COUNT];
 uint16_t	maxRPS = 0;
-uint16_t	avgRPS = 0;
 
 void anonometerTask(PTASKPARM p)
 {
-	static uint16_t		index = 0;
-	static uint16_t		max = 0;
-	static uint16_t		avg = 0;
+	static uint16_t		i = 0;
 	uint16_t			revolutionsPerSecond;
 	
 	/*
@@ -31,35 +31,46 @@ void anonometerTask(PTASKPARM p)
 	** Keep track of the maximum value. In terms of
 	** wind speed, this gives us the maximum 'gust' speed
 	*/
-	if (revolutionsPerSecond > max) {
-		max = revolutionsPerSecond;
+	if (revolutionsPerSecond > maxRPS) {
+		maxRPS = revolutionsPerSecond;
 	}
 	
-	avg += revolutionsPerSecond;
+	rpsBuffer[i] = revolutionsPerSecond;
 	
-	index++;
+	i++;
 	
-	if (index == WIND_SPEED_AVG_COUNT) {
-		/*
-		** Divide by 64...
-		*/
-		avgRPS = (avg >> WIND_SPEED_AVG_SHIFT) & 0x00FF;
-		maxRPS = max;
-		
-		/*
-		** Reset values...
-		*/
-		avg		= 0;
-		max		= 0;
-		index	= 0;
+	if (i == WIND_SPEED_AVG_COUNT) {
+		i = 0;
 	}
 	
 	rescheduleTask(TASK_ANONOMETER, NULL);
 }
 
+uint16_t getAvgRPS(void)
+{
+	int			i;
+	uint16_t	avgRPS = 0;
+	
+	for (i = 0;i < WIND_SPEED_AVG_COUNT;i++) {
+		avgRPS += rpsBuffer[i];
+	}
+	
+	avgRPS = avgRPS >> WIND_SPEED_AVG_SHIFT;
+	
+	return avgRPS;
+}
+
+uint16_t getMaxRPS(void)
+{
+	return maxRPS;
+}
+
 float getAvgWindSpeed(void)
 {
 	float			avgSpeed;
+	uint16_t		avgRPS;
+	
+	avgRPS = getAvgRPS();
 	
 	if (avgRPS >= KPH_LOOKUP_BUFFER_SIZE) {
 		avgRPS = KPH_LOOKUP_BUFFER_SIZE - 1;
