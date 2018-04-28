@@ -31,7 +31,10 @@ CC=avr-gcc
 LINKER=avr-gcc
 
 # Hex file creator
-ELFTOHEX=avr-objcopy
+OBJCOPY=avr-objcopy
+
+# Assembly dump tool
+OBJDUMP=avr-objdump
 
 # Size tool
 SIZETOOL=avr-size
@@ -40,13 +43,16 @@ SIZETOOL=avr-size
 UPLOADTOOL=../upload.sh
 
 # C compiler flags
-CFLAGS=-c -O3 -Wall -w -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=$(DEVICE) -DF_CPU=16000000L -DARDUINO=10804 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR
+CFLAGS=-c -g -Os -Wall -ffunction-sections -fdata-sections -mmcu=$(DEVICE) -DF_CPU=16000000L -DARDUINO=10804 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR
 
 # Linker flags
-LFLAGS=-w -flto -fuse-linker-plugin -Wl,--gc-sections -mmcu=$(DEVICE)
+LFLAGS=-fuse-linker-plugin -Wl,--gc-sections -mmcu=$(DEVICE)
 
 # Hex file creator flags
-HFLAGS=-O ihex -R .eeprom
+OBJCOPYFLAGS=-O ihex -R .eeprom
+
+#Obj dump flags
+OBJDUMPFLAGS=-I $(SRC) -f -s -l -S
 
 # Size tool flags
 SFLAGS=-C --mcu=$(DEVICE)
@@ -55,7 +61,7 @@ SFLAGS=-C --mcu=$(DEVICE)
 SCHEDOBJ=$(BUILD)/scheduler.o
 
 # Object files
-OBJFILES=$(SCHEDOBJ) $(BUILD)/utils.o $(BUILD)/led_utils.o $(BUILD)/heartbeat.o $(BUILD)/rxcmdtask.o $(BUILD)/adctask.o $(BUILD)/anonometer.o $(BUILD)/rainguage.o $(BUILD)/pwmtask.o $(BUILD)/rtc_atmega328p.o $(BUILD)/serial_atmega328p.o $(BUILD)/adc_atmega328p.o $(BUILD)/int_atmega328p.o $(BUILD)/pwm_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/main.o
+OBJFILES=$(SCHEDOBJ) $(BUILD)/utils.o $(BUILD)/led_utils.o $(BUILD)/heartbeat.o $(BUILD)/serialcmd.o $(BUILD)/adctask.o $(BUILD)/anonometer.o $(BUILD)/rainguage.o $(BUILD)/pwmtask.o $(BUILD)/rtc_atmega328p.o $(BUILD)/serial_atmega328p.o $(BUILD)/adc_atmega328p.o $(BUILD)/int_atmega328p.o $(BUILD)/pwm_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/main.o
 
 # Target
 all: $(TARGET)
@@ -82,8 +88,8 @@ $(BUILD)/led_utils.o: $(SRC)/led_utils.c $(SRC)/led_utils.h
 $(BUILD)/heartbeat.o: $(SRC)/heartbeat.c $(SRC)/heartbeat.h $(SRC)/led_utils.h $(SRC)/scheduler.h $(SRC)/taskdef.h
 	$(CC) $(CFLAGS) -o $(BUILD)/heartbeat.o $(SRC)/heartbeat.c
 
-$(BUILD)/rxcmdtask.o: $(SRC)/rxcmdtask.c $(SRC)/rxcmdtask.h $(SRC)/led_utils.h $(SRC)/scheduler.h $(SRC)/serial_atmega328p.h
-	$(CC) $(CFLAGS) -o $(BUILD)/rxcmdtask.o $(SRC)/rxcmdtask.c
+$(BUILD)/serialcmd.o: $(SRC)/serialcmd.c $(SRC)/serialcmd.h $(SRC)/led_utils.h $(SRC)/scheduler.h $(SRC)/rxtxmsgdef.h $(SRC)/serial_atmega328p.h $(SRC)/utils.h
+	$(CC) $(CFLAGS) -o $(BUILD)/serialcmd.o $(SRC)/serialcmd.c
 
 $(BUILD)/adctask.o: $(SRC)/adctask.c $(SRC)/adctask.h $(SRC)/scheduler.h $(SRC)/taskdef.h $(SRC)/adc_atmega328p.h
 	$(CC) $(CFLAGS) -o $(BUILD)/adctask.o $(SRC)/adctask.c
@@ -109,13 +115,13 @@ $(BUILD)/int_atmega328p.o: $(SRC)/int_atmega328p.c $(SRC)/int_atmega328p.h
 $(BUILD)/pwm_atmega328p.o: $(SRC)/pwm_atmega328p.c $(SRC)/pwm_atmega328p.h
 	$(CC) $(CFLAGS) -o $(BUILD)/pwm_atmega328p.o $(SRC)/pwm_atmega328p.c
 
-$(BUILD)/serial_atmega328p.o: $(SRC)/serial_atmega328p.c $(SRC)/serial_atmega328p.h $(SRC)/rxtxmsgdef.h $(SRC)/scheduler.h $(SRC)/taskdef.h $(SRC)/rxcmdtask.h $(SRC)/adctask.h $(SRC)/utils.h
+$(BUILD)/serial_atmega328p.o: $(SRC)/serial_atmega328p.c $(SRC)/serial_atmega328p.h $(SRC)/rxtxmsgdef.h $(SRC)/scheduler.h $(SRC)/taskdef.h
 	$(CC) $(CFLAGS) -o $(BUILD)/serial_atmega328p.o $(SRC)/serial_atmega328p.c
 
 $(BUILD)/error_atmega328p.o: $(SRC)/error_atmega328p.c $(SRC)/error.h $(SRC)/led_utils.h
 	$(CC) $(CFLAGS) -o $(BUILD)/error_atmega328p.o $(SRC)/error_atmega328p.c
 
-$(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/heartbeat.h $(SRC)/adctask.h $(SRC)/anonometer.h $(SRC)/rainguage.h $(SRC)/pwmtask.h $(SRC)/rxcmdtask.h $(SRC)/taskdef.h $(SRC)/led_utils.h $(SRC)/rtc_atmega328p.h $(SRC)/adc_atmega328p.h $(SRC)/int_atmega328p.h $(SRC)/pwm_atmega328p.h $(SRC)/error.h
+$(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/heartbeat.h $(SRC)/adctask.h $(SRC)/anonometer.h $(SRC)/rainguage.h $(SRC)/pwmtask.h $(SRC)/serialcmd.h $(SRC)/taskdef.h $(SRC)/led_utils.h $(SRC)/rtc_atmega328p.h $(SRC)/adc_atmega328p.h $(SRC)/int_atmega328p.h $(SRC)/pwm_atmega328p.h $(SRC)/error.h
 	$(CC) $(CFLAGS) -o $(BUILD)/main.o $(SRC)/main.c
 
 ###############################################################################
@@ -125,6 +131,7 @@ $(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/heartbeat.h $(SRC)/adct
 ###############################################################################
 $(BUILD)/$(ELF): $(OBJFILES)
 	$(LINKER) $(LFLAGS) -o $(BUILD)/$(ELF) $(OBJFILES) -lm
+	$(OBJDUMP) $(OBJDUMPFLAGS) $(BUILD)/$(ELF) > $(PROJNAME).s
 
 ###############################################################################
 #
@@ -132,7 +139,7 @@ $(BUILD)/$(ELF): $(OBJFILES)
 #
 ###############################################################################
 $(TARGET): $(BUILD)/$(ELF)
-	$(ELFTOHEX) $(HFLAGS) $(BUILD)/$(ELF) $(TARGET)
+	$(OBJCOPY) $(OBJCOPYFLAGS) $(BUILD)/$(ELF) $(TARGET)
 	$(SIZETOOL) $(SFLAGS) $(BUILD)/$(ELF)
 
 ###############################################################################
@@ -142,3 +149,8 @@ $(TARGET): $(BUILD)/$(ELF)
 ###############################################################################
 install: $(TARGET)
 	$(UPLOADTOOL) $(TARGET) $(UPLOADPORT)
+	
+clean: 
+	rm $(BUILD)/*
+	rm $(PROJNAME).s
+	rm $(TARGET)
