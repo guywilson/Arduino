@@ -299,7 +299,7 @@ void unscheduleTask(uint16_t taskID)
 
 /******************************************************************************
 **
-** Name: schedule()
+** Name: startScheduler()
 **
 ** Description: The main scheduler loop, this will loop forever waiting for 
 ** tasks to be scheduled. This must be the last function called from main().
@@ -309,7 +309,7 @@ void unscheduleTask(uint16_t taskID)
 ** Returns:		it doesn't 
 **
 ******************************************************************************/
-void schedule()
+void startScheduler()
 {
 	int			i = 0;
 	PTASKDEF	td = NULL;

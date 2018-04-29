@@ -58,7 +58,7 @@ int main(void)
 	/*
 	** Start the scheduler...
 	*/
-	schedule();
+	startScheduler();
 	
 	/*
 	** Should never reach here...
