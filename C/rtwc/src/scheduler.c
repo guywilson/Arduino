@@ -1,3 +1,14 @@
+/******************************************************************************
+**
+** File: scheduler.c
+**
+** Description: API functions for the real-time scheduler. Based on a distant
+** memory of the scheduler I used at Isotek Elecronics Ltd. Leeds, UK circa 1996
+**
+** Copyright: Guy Wilson (c) 2018
+**
+******************************************************************************/
+
 #include <stddef.h>
 #include <avr/io.h>
 
@@ -6,41 +17,59 @@
 #include "error.h"
 
 #define CHECK_TIMER_OVERFLOW
-#define MAX_TIMER_VALUE				0xFFFFFFFF
 
+/******************************************************************************
+**
+** The TASKDEF struct.
+**
+** Holds the per-task info for the scheduler.
+**
+******************************************************************************/
 typedef struct
 {
-	uint16_t		ID;
-	uint32_t		startTime;
-	uint32_t		scheduledTime;
-	uint32_t		delay;
-	uint8_t			isScheduled;
-	uint8_t			isAllocated;
-	PTASKPARM		pParameter;
+	uint16_t		ID;				// Unique user-assigned ID
+	timer_t			startTime;		// The RTC value when scheduleTask() was callled
+	timer_t			scheduledTime;	// The RTC value when the task should run
+	timer_t			delay;			// The requested delay (in ms) of when the task should run
+	uint8_t			isScheduled;	// Is this task scheduled
+	uint8_t			isAllocated;	// Is this allocated to a task
+	PTASKPARM		pParameter;		// The parameters to the task
 	
-	void (* run)(PTASKPARM);
-}
+	void (* run)(PTASKPARM);		// Pointer to the task function to run
+}									// Must be of the form void task(PTASKPARM p);
 TASKDEF;
 
 typedef TASKDEF *	PTASKDEF;
 
-extern volatile uint32_t _realTimeClock;
+extern volatile timer_t _realTimeClock;		// External ref to the RTC
 
-TASKDEF		taskDefs[MAX_TASKS];
-int			taskCount = 0;
+TASKDEF		taskDefs[MAX_TASKS];			// Array of tasks for ther scheduler
+int			taskCount = 0;					// Number of tasks registered
 
 /******************************************************************************
 **
-** Calculate the scheduled time
+** Name: _getScheduledTime()
+**
+** Description: Calculates the future RTC value when the task should run
+**
+** Parameters:
+**				uint32_t	startTime		The RTC value when called
+**				uint32_t	requestedDelay	The delay in ms before the task runs
+**
+** Returns: 
+**				uint32_t	The future RTC value when the task should run
 **
 ** If we don't care about checking if the timer will overflow, use a macro
-** to calculate the default scheduled time.
+** to calculate the default scheduled time (with risk of overflow). With a 
+** 32-bit timer, incrementing every 1ms, the timer will overflow in 
+** approximately 50 days. For a 64-bit timer, it won't overflow for an
+** unbelievable ~585 million years!
 **
 ******************************************************************************/
 #ifdef CHECK_TIMER_OVERFLOW
-uint32_t _getScheduledTime(uint32_t startTime, uint32_t requestedDelay)
+uint32_t _getScheduledTime(timer_t startTime, timer_t requestedDelay)
 {
-	uint32_t		overflowTime;
+	timer_t			overflowTime;
 	
 	overflowTime = MAX_TIMER_VALUE - startTime;
 	
@@ -58,6 +87,19 @@ uint32_t _getScheduledTime(uint32_t startTime, uint32_t requestedDelay)
 /******************************************************************************
 **
 ** Public API functions
+**
+******************************************************************************/
+
+/******************************************************************************
+**
+** Name: initScheduler()
+**
+** Description: Initialises the scheduler, must be called before any other
+** scheduler API functions.
+**
+** Parameters:	N/A
+**
+** Returns:		void 
 **
 ******************************************************************************/
 void initScheduler()
@@ -80,6 +122,18 @@ void initScheduler()
 	}
 }
 
+/******************************************************************************
+**
+** Name: registerTask()
+**
+** Description: Registers a task with the scheduler.
+**
+** Parameters:	uint16_t	taskID		A unique ID for the task
+**				void 		(* run)		Pointer to the actual task function
+**
+** Returns:		void 
+**
+******************************************************************************/
 void registerTask(uint16_t taskID, void (* run)(PTASKPARM))
 {
 	int			i = 0;
@@ -107,6 +161,18 @@ void registerTask(uint16_t taskID, void (* run)(PTASKPARM))
 	}
 }
 
+/******************************************************************************
+**
+** Name: deregisterTask()
+**
+** Description: Deregisters a task with the scheduler, freeing up the task
+** definition.
+**
+** Parameters:	uint16_t	taskID		The unique ID for the task
+**
+** Returns:		void 
+**
+******************************************************************************/
 void deregisterTask(uint16_t taskID)
 {
 	int			i = 0;
@@ -130,7 +196,22 @@ void deregisterTask(uint16_t taskID)
 	}
 }
 
-void scheduleTask(uint16_t taskID, uint32_t time, PTASKPARM p)
+/******************************************************************************
+**
+** Name: scheduleTask()
+**
+** Description: Schedules the task to run after the specified delay. A task
+** must be registered using registerTask() before it can be scheduled.
+**
+** Parameters:	
+** uint16_t		taskID		The unique ID for the task
+** timer_t		time		Number of ms in the future for the task to run
+** PTASKPARM	p			Pointer to the task parameters, can be NULL
+**
+** Returns:		void 
+**
+******************************************************************************/
+void scheduleTask(uint16_t taskID, timer_t time, PTASKPARM p)
 {
 	int			i = 0;
 	PTASKDEF	td = NULL;
@@ -149,6 +230,24 @@ void scheduleTask(uint16_t taskID, uint32_t time, PTASKPARM p)
 	}
 }
 
+/******************************************************************************
+**
+** Name: rescheduleTask()
+**
+** Description: Reschedules the task to run again after the same delay as
+** specified in the scheduleTask() call. Useful for calling at the end of
+** the task itself to force it to run again (after the specified delay).
+**
+** If you want to reschedule the task to run after a different delay, simply
+** call scheduleTask() instead.
+**
+** Parameters:	
+** uint16_t		taskID		The unique ID for the task
+** PTASKPARM	p			Pointer to the task parameters, can be NULL
+**
+** Returns:		void 
+**
+******************************************************************************/
 void rescheduleTask(uint16_t taskID, PTASKPARM p)
 {
 	int			i = 0;
@@ -167,6 +266,19 @@ void rescheduleTask(uint16_t taskID, PTASKPARM p)
 	}
 }
 
+/******************************************************************************
+**
+** Name: unscheduleTask()
+**
+** Description: Unschedules a task that has previously been scheduled, e.g. this
+** will cancel the scheduled run.
+**
+** Parameters:	
+** uint16_t		taskID		The unique ID for the task
+**
+** Returns:		void 
+**
+******************************************************************************/
 void unscheduleTask(uint16_t taskID)
 {
 	int			i = 0;
@@ -185,6 +297,18 @@ void unscheduleTask(uint16_t taskID)
 	}
 }
 
+/******************************************************************************
+**
+** Name: schedule()
+**
+** Description: The main scheduler loop, this will loop forever waiting for 
+** tasks to be scheduled. This must be the last function called from main().
+**
+** Parameters:	N/A
+**
+** Returns:		it doesn't 
+**
+******************************************************************************/
 void schedule()
 {
 	int			i = 0;
