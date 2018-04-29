@@ -9,7 +9,7 @@ typedef void *					PTASKPARM;
 typedef uint32_t				timer_t;	// Implemented timer resolution, change if
 											// your RTC is 64-bit for example.
 
-#define MAX_TIMER_VALUE			((2 ^ (sizeof(timer_t) * 8)) - 1)
+#define MAX_TIMER_VALUE			~((timer_t)0)
 
 void		initScheduler();
 void		registerTask(uint16_t taskID, void (* run)(PTASKPARM));
