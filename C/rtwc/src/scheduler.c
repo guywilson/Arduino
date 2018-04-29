@@ -70,11 +70,11 @@ void _nullTask(PTASKPARM p)
 ** Description: Calculates the future RTC value when the task should run
 **
 ** Parameters:
-**				uint32_t	startTime		The RTC value when called
-**				uint32_t	requestedDelay	The delay in ms before the task runs
+**				timer_t		startTime		The RTC value when called
+**				timer_t		requestedDelay	The delay in ms before the task runs
 **
 ** Returns: 
-**				uint32_t	The future RTC value when the task should run
+**				timer_t		The future RTC value when the task should run
 **
 ** If we don't care about checking if the timer will overflow, use a macro
 ** to calculate the default scheduled time (with risk of overflow). With a 
@@ -84,7 +84,7 @@ void _nullTask(PTASKPARM p)
 **
 ******************************************************************************/
 #ifdef CHECK_TIMER_OVERFLOW
-uint32_t _getScheduledTime(timer_t startTime, timer_t requestedDelay)
+timer_t _getScheduledTime(timer_t startTime, timer_t requestedDelay)
 {
 	timer_t			overflowTime;
 	
