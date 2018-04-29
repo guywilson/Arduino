@@ -46,6 +46,23 @@ extern volatile timer_t _realTimeClock;		// External ref to the RTC
 TASKDEF		taskDefs[MAX_TASKS];			// Array of tasks for ther scheduler
 int			taskCount = 0;					// Number of tasks registered
 
+
+/******************************************************************************
+**
+** Name: _nullTask()
+**
+** Description: Null task assigned to TASKDEF entries that are unused.
+**
+** Parameters:	PTASKPARM	p		Unused.
+**
+** Returns:		void 
+**
+******************************************************************************/
+void _nullTask(PTASKPARM p)
+{
+	// Do nothing...
+}
+
 /******************************************************************************
 **
 ** Name: _getScheduledTime()
@@ -119,6 +136,7 @@ void initScheduler()
 		td->isScheduled		= 0;
 		td->isAllocated		= 0;
 		td->pParameter		= NULL;
+		td->run				= &_nullTask;
 	}
 }
 
@@ -189,6 +207,7 @@ void deregisterTask(uint16_t taskID)
 			td->isScheduled		= 0;
 			td->isAllocated		= 0;
 			td->pParameter		= NULL;
+			td->run				= &_nullTask;
 			
 			taskCount--;
 			break;
