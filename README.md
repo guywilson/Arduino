@@ -1,10 +1,6 @@
 # Arduino
-Arduino C/C++ Development
-
-rtc
----
-Real-time scheduler C++
+Arduino pure C Development
 
 rtwc
 ---------------------------
-Real-time weather app with scheduler written in C
+Takes inputs from sensors for a Weather station, with a real-time scheduler written in C
