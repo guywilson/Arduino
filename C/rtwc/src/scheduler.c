@@ -2,7 +2,7 @@
 **
 ** File: scheduler.c
 **
-** Description: API functions for the real-time scheduler. Inspired by a distant
+** Description: API functions for the real-time scheduler. Based on a distant
 ** memory of the scheduler I used at Isotek Elecronics Ltd. Leeds, UK circa 1996
 **
 ** Copyright: Guy Wilson (c) 2018
@@ -77,11 +77,10 @@ void _nullTask(PTASKPARM p)
 **				timer_t		The future RTC value when the task should run
 **
 ** If we don't care about checking if the timer will overflow, use a macro
-** to calculate the default scheduled time (with risk of overflow). 
-** 
-** With a timer incrementing every 1ms: 
-** A 32-bit timer will overflow in approximately 50 days. 
-** A 64-bit timer will overflow in approximately 585 million years!
+** to calculate the default scheduled time (with risk of overflow). With a 
+** 32-bit timer, incrementing every 1ms, the timer will overflow in 
+** approximately 50 days. For a 64-bit timer, it won't overflow for an
+** unbelievable ~585 million years!
 **
 ******************************************************************************/
 #ifdef CHECK_TIMER_OVERFLOW
