@@ -11,10 +11,15 @@ Based around a real-time scheduler, suitable for any number of real-time control
 The scheduler API consists of the following functions:
 
 void initScheduler();                         // Initialise the scheduler
+
 void registerTask(taskID, ptr_to_task_func);  // Register a task with the scheduler, pass the address of the task function
+
 void deregisterTask(taskID);                  // De-register a previously registered task
+
 void scheduleTask(taskID, time, task_parms);  // Schedule a task to run in time ms
+
 void rescheduleTask(taskID, task_parms);      // Reschedule a task to run again with the same time delay
+
 void unscheduleTask(taskID);                  // Unschedule a previously scheduled task
 
 void startScheduler();                        // Start the scheduler loop, should never return
