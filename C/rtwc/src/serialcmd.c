@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string.h>
 
 #include "scheduler.h"
 #include "serialcmd.h"
@@ -10,179 +11,114 @@
 #include "serial_atmega328p.h"
 #include "utils.h"
 
-char 		buffer[64];
-int			length;
-
-void respondAck()
+void respond(RXTX_CMD * pParms)
 {
-	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[2] = 'O';
-	buffer[3] = 'K';
-	buffer[4] = MSG_FINISH;
-	
-	txstr(buffer, 5);
-}
-
-void buildWeatherResponse()
-{
-	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[3] = RESPONSE_ACK;
-	buffer[4] = MSG_FINISH;
-	
-	txstr(buffer, 4);
-}
-
-void respondADC(uint8_t * data, uint8_t length)
-{
-	uint8_t			channel = data[0] - 0x30;
+	static char		buffer[64];
+	int				i;
 	
 	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[2] = RESPONSE_ADC;
-	buffer[3] = data[0];
+	buffer[1] = pParms->messageID & 0x00FF;
+	buffer[2] = (pParms->messageID >> 8) & 0x00FF;
+	buffer[3] = pParms->cmd_resp;
+	buffer[4] = pParms->dataLength;
 	
-	length = uint32ToString(&buffer[4], getADCAverage(channel));
+	i = 5;
 	
-	buffer[length + 4] = MSG_FINISH;
+	if (pParms->dataLength > 0) {
+		buffer[i] = pParms->data[i];
+		i++;
+	}
 	
-	length = length + 5;
+	buffer[i] = MSG_FINISH;
 	
-	txstr(buffer, length);
-}
-
-void respondAvgRPS(void)
-{
-	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[2] = RESPONSE_AVG_WIND_SPEED;
-
-	length = uint16ToString(&buffer[3], getAvgRPS());
-
-	buffer[length + 3] = MSG_FINISH;
-	
-	txstr(buffer, length + 4);
-}
-
-void respondMaxRPS(void)
-{
-	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[2] = RESPONSE_MAX_WIND_SPEED;
-	
-	length = uint16ToString(&buffer[3], getMaxRPS());
-	
-	buffer[length + 3] = MSG_FINISH;
-	
-	length = length + 4;
-	
-	txstr(buffer, length);
-}
-
-void respondAvgWindSpeed(void)
-{
-	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[2] = RESPONSE_AVG_WIND_SPEED;
-	
-	length = doubleToString(&buffer[3], getAvgWindSpeed());
-	
-	buffer[length + 3] = MSG_FINISH;
-	
-	length = length + 4;
-	
-	txstr(buffer, length);
-}
-
-void respondMaxWindSpeed(void)
-{
-	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[2] = RESPONSE_MAX_WIND_SPEED;
-	
-	length = doubleToString(&buffer[3], getMaxWindSpeed());
-	
-	buffer[length + 3] = MSG_FINISH;
-	
-	length = length + 4;
-	
-	txstr(buffer, length);
-}
-
-void respondAvgRainfall(void)
-{
-	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[2] = RESPONSE_AVG_RAINFALL;
-	
-	length = doubleToString(&buffer[3], getAvgRainfall());
-	
-	buffer[length + 3] = MSG_FINISH;
-	
-	length = length + 4;
-	
-	txstr(buffer, length);
-}
-
-void respondMaxRainfall(void)
-{
-	buffer[0] = MSG_START;
-	buffer[1] = MSG_PADDING;
-	buffer[2] = RESPONSE_MAX_RAINFALL;
-	
-	length = doubleToString(&buffer[3], getMaxRainfall());
-	
-	buffer[length + 3] = MSG_FINISH;
-	
-	length = length + 4;
-	
-	txstr(buffer, length);
+	txstr(buffer, pParms->dataLength + 6);
 }
 
 void RxCmdTask(PTASKPARM p)
 {
-	RX_CMD * cmd = (RX_CMD *)p;
+	RXTX_CMD * 		cmd = (RXTX_CMD *)p;
+	ADCRESULT		adcResult;
+	int				strLength;
 
-	switch (cmd->command) {
+	switch (cmd->cmd_resp) {
 		case COMMAND_PING:
-			respondAck();
+			cmd->cmd_resp = RESPONSE_ACK;
+			cmd->dataLength = 0;
+			
+			respond(cmd);
 			break;
 			
 		case COMMAND_WEATHER:
-			buildWeatherResponse();
+			cmd->cmd_resp = RESPONSE_WEATHER;
+			cmd->dataLength = 0;
+			
+			respond(cmd);
 			break;
 			
 		case COMMAND_LEDON:
 			turnOn(LED_PORT0);
-			respondAck();
+			
+			cmd->cmd_resp = RESPONSE_ACK;
+			cmd->dataLength = 0;
+			
+			respond(cmd);
 			break;
 			
 		case COMMAND_LEDOFF:
 			turnOff(LED_PORT0);
-			respondAck();
+			
+			cmd->cmd_resp = RESPONSE_ACK;
+			cmd->dataLength = 0;
+			
+			respond(cmd);
 			break;
 			
 		case COMMAND_ADC:
-			respondADC(cmd->message, COMMAND_ADC_LENGTH);
+			cmd->cmd_resp = RESPONSE_ADC;
+			cmd->dataLength = sizeof(ADCRESULT);
+			
+			adcResult.channel   = cmd->data[0];
+			adcResult.result	= getADCAverage(adcResult.channel);
+			
+			memcpy(&cmd->data, &adcResult, cmd->dataLength);
+			
+			respond(cmd);
 			break;
 			
 		case COMMAND_AVG_WIND_SPEED:
-			respondAvgWindSpeed();
-//			respondAvgRPS();
+			strLength = doubleToString(cmd->data, getAvgWindSpeed());
+			
+			cmd->cmd_resp = RESPONSE_AVG_WIND_SPEED;
+			cmd->dataLength = strLength;
+			
+			respond(cmd);
 			break;
 			
 		case COMMAND_MAX_WIND_SPEED:
-			respondMaxWindSpeed();
-//			respondMaxRPS();
+			strLength = doubleToString(cmd->data, getMaxWindSpeed());
+			
+			cmd->cmd_resp = RESPONSE_MAX_WIND_SPEED;
+			cmd->dataLength = strLength;
+			
+			respond(cmd);
 			break;
 			
 		case COMMAND_AVG_RAINFALL:
-			respondAvgRainfall();
+			strLength = doubleToString(cmd->data, getAvgRainfall());
+			
+			cmd->cmd_resp = RESPONSE_AVG_RAINFALL;
+			cmd->dataLength = strLength;
+			
+			respond(cmd);
 			break;
 			
 		case COMMAND_MAX_RAINFALL:
-			respondMaxRainfall();
+			strLength = doubleToString(cmd->data, getMaxRainfall());
+			
+			cmd->cmd_resp = RESPONSE_MAX_RAINFALL;
+			cmd->dataLength = strLength;
+			
+			respond(cmd);
 			break;
 	}
 }

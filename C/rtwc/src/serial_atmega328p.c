@@ -3,6 +3,7 @@
 #endif
 
 #include <stdint.h>
+#include <string.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/setbaud.h>
@@ -14,6 +15,8 @@
 
 uint8_t			txBuffer[64];
 uint8_t			txLength = 0;
+
+RXTX_CMD 		rxtxCmd;
 
 void setupSerial()
 {
@@ -99,63 +102,52 @@ void txstr(char * pszData, uint8_t dataLength)
 */
 ISR(USART_RX_vect, ISR_BLOCK)
 {
-	static uint8_t 		message[MAX_MESSAGE_LENGTH];
 	static uint8_t		state = STATE_START;
-	static uint8_t		messageIndex = 0;
-	static uint8_t		dataLength = 0;
-	static uint8_t		errorState = RX_ERROR_OK;
-	static uint8_t		command = 0;
-	static RX_CMD 		rxParms;
+	static uint8_t		idData[2];
+	static uint8_t		idIndex = 0;
+	static uint8_t		dataIndex = 0;
 	
 	uint8_t	b = UDR0;
 	
 	switch (state) {
 		case STATE_START:
 			if (b == MSG_START) {
-				state = STATE_PADDING;
+				state = STATE_MESSAGEID;
+				idIndex = 0;
 			}
 			break;
 		
-		case STATE_PADDING:
-			if (b == MSG_PADDING) {
+		case STATE_MESSAGEID:
+			idData[idIndex++] = b;
+			
+			if (idIndex == 2) {
+				memcpy(&rxtxCmd.messageID, &idData[0], 2);
 				state = STATE_COMMAND;
-			}
-			else {
-				errorState = RX_ERROR_PADDING;
 			}
 			break;
 		
 		case STATE_COMMAND:
-			command = b;
+			rxtxCmd.cmd_resp = b;
+			state = STATE_DATALENGTH;
+			break;
+
+		case STATE_DATALENGTH:
+			rxtxCmd.dataLength = b;
 			
-			/*
-			** Set data length explicitly if appropriate for the
-			** command, default is 0 data length...
-			*/
-			switch (command) {
-				case COMMAND_WEATHER:
-					dataLength = COMMAND_WEATHER_LENGTH;
-					state = STATE_DATA;
-					break;
-			
-				case COMMAND_ADC:
-					dataLength = COMMAND_ADC_LENGTH;
-					state = STATE_DATA;
-					break;
-					
-				default:
-					dataLength = 0;
-					state = STATE_FINISH;
-					break;
+			if (rxtxCmd.dataLength > 0) {
+				state = STATE_DATA;
+				dataIndex = 0;
+			}
+			else {
+				state = STATE_FINISH;
 			}
 			break;
-		
-		case STATE_DATA:
-			message[messageIndex++] = b;
 			
-			if (messageIndex == dataLength) {
+		case STATE_DATA:
+			rxtxCmd.data[dataIndex++] = b;
+			
+			if (dataIndex == rxtxCmd.dataLength) {
 				state = STATE_FINISH;
-				messageIndex = 0;
 			}
 			break;
 		
@@ -164,14 +156,10 @@ ISR(USART_RX_vect, ISR_BLOCK)
 				state = STATE_START;
 			}
 			else {
-				errorState = RX_ERROR_DATA_OVERRUN;
+				rxtxCmd.errorState = RX_ERROR_DATA_OVERRUN;
 			}
 			
-			rxParms.command 	= command;
-			rxParms.message		= message;
-			rxParms.errorState	= errorState;
-
-			scheduleTask(TASK_RXCMD, 1, &rxParms);
+			scheduleTask(TASK_RXCMD, 1, &rxtxCmd);
 			break;
 	}
 }
