@@ -6,8 +6,12 @@
 #define MAX_TASKS           	16
 
 typedef void *					PTASKPARM;
-typedef uint32_t				timer_t;	// Implemented timer resolution, change if
-											// your RTC is 64-bit for example.
+
+/*
+** Define timer type for bit-depth of timer, change this
+** if your timer is 64-bit for example...
+*/
+typedef uint32_t				timer_t;
 
 #define MAX_TIMER_VALUE			~((timer_t)0)
 
