@@ -6,7 +6,7 @@
 #define KPH_LOOKUP_BUFFER_SIZE			256
 
 /*
-** The diameter of the anonometer blades in metres...
+** The diameter of the anemometer blades in metres...
 */
 #define BLADE_DIAMETER					 0.1
 
@@ -18,10 +18,10 @@
 ** This is an expensive operation on a microcontroller, hence we calcuate this 
 ** at compile time and store in flash ROM.
 **
-** kph = (pi x diameter of anonometer (m) x rps x 3600) / 1000
+** kph = (pi x diameter of anemometer (m) x rps x 3600) / 1000
 **
 ** Revolutions per second (rps) is measured using a reed switch and a magnet attached
-** close to the axis of the anonometer blades. If the anonometer blades have a 
+** close to the axis of the anemometer blades. If the anemometer blades have a 
 ** diameter of 10cm (0.1m), then 70 rps is equivalent to a wind speed of 
 ** ~80 kph (50 mph).
 **

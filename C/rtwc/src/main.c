@@ -7,7 +7,7 @@
 #include "heartbeat.h"
 #include "serialcmd.h"
 #include "adctask.h"
-#include "anonometer.h"
+#include "anemometer.h"
 #include "rainguage.h"
 #include "pwmtask.h"
 
@@ -16,6 +16,7 @@
 #include "adc_atmega328p.h"
 #include "int_atmega328p.h"
 #include "pwm_atmega328p.h"
+#include "readcounter.h"
 #include "serial_atmega328p.h"
 #include "error.h"
 
@@ -29,7 +30,7 @@ void setup(void)
 	registerTask(TASK_HEARTBEAT, &HeartbeatTask);
 	registerTask(TASK_RXCMD, &RxCmdTask);
 	registerTask(TASK_ADC, &ADCTask);
-	registerTask(TASK_ANONOMETER, &anonometerTask);
+	registerTask(TASK_ANEMOMETER, &anemometerTask);
 	registerTask(TASK_RAINGUAGE, &rainGuageTask);
 	registerTask(TASK_PWM, &PWMTask);
 
@@ -37,6 +38,7 @@ void setup(void)
 	setupRTC();
 	setupSerial();
 	setupADC();
+	setupCounterRead();
 	setupExternalInterrupts();
 
 	//enable interrupts
@@ -51,7 +53,7 @@ int main(void)
 	setup();
 	
 	scheduleTask(TASK_HEARTBEAT, 2950, NULL);
-	scheduleTask(TASK_ANONOMETER, 1000, NULL);
+	scheduleTask(TASK_ANEMOMETER, 1000, NULL);
 	scheduleTask(TASK_RAINGUAGE, 3600000, NULL); // Schedule in 1 hour...
 	scheduleTask(TASK_PWM, 50, NULL);
 

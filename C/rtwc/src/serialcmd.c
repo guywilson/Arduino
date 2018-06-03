@@ -6,7 +6,7 @@
 #include "rxtxmsgdef.h"
 #include "led_utils.h"
 #include "adctask.h"
-#include "anonometer.h"
+#include "anemometer.h"
 #include "rainguage.h"
 #include "serial_atmega328p.h"
 #include "utils.h"
