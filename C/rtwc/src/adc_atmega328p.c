@@ -52,9 +52,9 @@ ISR(ADC_vect, ISR_BLOCK)
 	}
 
 	/*
-	** Each channel will process a result every 125 ms
+	** Each channel will process a result every 15 ms
 	** This will fill the moving average buffer for each 
-	** channel every 2 seconds...
+	** channel every second...
 	*/
-	scheduleTask(TASK_ADC, 125, (PTASKPARM)&adcr);
+	scheduleTask(TASK_ADC, 15, (PTASKPARM)&adcr);
 }
