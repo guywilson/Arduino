@@ -16,10 +16,10 @@ void ADCTask(PTASKPARM p)
 {
 	PADCRESULT	r =		(PADCRESULT)p;
 	uint8_t		c;
-	uint8_t		p;
+	uint8_t		ptr;
 
-	c = r->channel;
-	p = resultPtr[c];
+	c	= r->channel;
+	ptr = resultPtr[c];
 	
 	/*
 	** Recommended that the first conversion result for each channel
@@ -29,7 +29,7 @@ void ADCTask(PTASKPARM p)
 		conversionCount++;
 	}
 	else {
-		adcResults[c][p] = r->result;
+		adcResults[c][ptr] = r->result;
 		
 		resultPtr[c]++;
 		
