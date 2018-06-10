@@ -27,6 +27,8 @@
 ** 60C, for ADC values between 0 - 1023. The highest temperate ever recorded
 ** on earth is 56.7C in Death Valley, California.
 **
+** Vo = Vs(P * 0.009 - 0.095)
+** P = ((adc value / 1023) / 0.09) + 15.095
 ** This is an expensive operation on a microcontroller, hence we calcuate this 
 ** at compile time and store in flash ROM.
 **
