@@ -1,6 +1,8 @@
 #ifndef _INCL_ADC_ATMEGA328P
 #define _INCL_ADC_ATMEGA328P
 
+#define NUM_ADC_CHANNELS			8
+
 #define ADC_CHANNEL0				0x00
 #define ADC_CHANNEL1				0x01
 #define ADC_CHANNEL2				0x02
@@ -21,7 +23,7 @@
 #define ADC_PRESCALER_DIV64			0x06
 #define ADC_PRESCALER_DIV128		0x07
 
-#define ADC_USED_CHANNELS			2
+#define ADC_USED_CHANNELS			3
 
 void setupADC(void);
 void triggerADC(void);

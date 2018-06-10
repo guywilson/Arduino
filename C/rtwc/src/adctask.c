@@ -6,18 +6,21 @@
 #include "taskdef.h"
 #include "adc_atmega328p.h"
 
-uint16_t		adcResultsCH0[ADC_RESULT_ARRAY_SIZE];
-uint16_t		adcResultsCH1[ADC_RESULT_ARRAY_SIZE];
+uint16_t		adcResults[NUM_ADC_CHANNELS][ADC_RESULT_ARRAY_SIZE];
 
-uint8_t			resultPtrCH0 = 0;
-uint8_t			resultPtrCH1 = 0;
+uint8_t			resultPtr[NUM_ADC_CHANNELS] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 uint8_t			conversionCount = 0;
 
 void ADCTask(PTASKPARM p)
 {
-	PADCRESULT r =		(PADCRESULT)p;
+	PADCRESULT	r =		(PADCRESULT)p;
+	uint8_t		c;
+	uint8_t		p;
 
+	c = r->channel;
+	p = resultPtr[c];
+	
 	/*
 	** Recommended that the first conversion result for each channel
 	** is ignored as it is likely to be innacurate...
@@ -26,23 +29,12 @@ void ADCTask(PTASKPARM p)
 		conversionCount++;
 	}
 	else {
-		if (r->channel == ADC_CHANNEL0) {
-			adcResultsCH0[resultPtrCH0] = r->result;
-
-			resultPtrCH0++;
-
-			if (resultPtrCH0 == ADC_RESULT_ARRAY_SIZE) {
-				resultPtrCH0 = 0;
-			}
-		}
-		else if (r->channel == ADC_CHANNEL1) {
-			adcResultsCH1[resultPtrCH1] = r->result;
-
-			resultPtrCH1++;
-
-			if (resultPtrCH1 == ADC_RESULT_ARRAY_SIZE) {
-				resultPtrCH1 = 0;
-			}
+		adcResults[c][p] = r->result;
+		
+		resultPtr[c]++;
+		
+		if (resultPtr[c] == ADC_RESULT_ARRAY_SIZE) {
+			resultPtr[c] = 0;
 		}
 	}
 	
@@ -56,16 +48,9 @@ uint16_t getADCAverage(uint8_t channel)
 {
 	int			i;
 	uint16_t	average = 0;
-	
-	if (channel == 0) {
-		for (i = 0;i < ADC_RESULT_ARRAY_SIZE;i++) {
-			average += adcResultsCH0[i];
-		}
-	}
-	else {
-		for (i = 0;i < ADC_RESULT_ARRAY_SIZE;i++) {
-			average += adcResultsCH1[i];
-		}
+
+	for (i = 0;i < ADC_RESULT_ARRAY_SIZE;i++) {
+		average += adcResults[channel][i];
 	}
 	
 	average = average >> ADC_RESULT_AVG_SHIFT;
