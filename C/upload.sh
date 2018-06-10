@@ -1,7 +1,8 @@
 #!/bin/bash
 
-TARGET=$1
-SERIALPORT=$2
-BAUDRATE=57600
+DEVICE=$1
+TARGET=$2
+SERIALPORT=$3
+BAUDRATE=115200
 
-avrdude -v -patmega328p -carduino -P$SERIALPORT -b$BAUDRATE -D -Uflash:w:$TARGET:i
+avrdude -C../avrdude.conf -v -p$DEVICE -carduino -P$SERIALPORT -b$BAUDRATE -D -Uflash:w:$TARGET:i
