@@ -11,7 +11,11 @@
 float getPressure()
 {
 	float		pressure;
-	uint16_t	adcPressure;
+	uint16_t	avgPressureADC;
 	
+	avgPressureADC = getADCAverage(ADC_CHANNEL2);
 	
+	pressure = pgm_read_float(&(mbarLookup[avgPressureADC]));
+	
+	return pressure;
 }
