@@ -33,7 +33,7 @@
 ** macro to get the far pointer to the flash ROM.
 **
 ******************************************************************************/
-static const float humidityLookup[MBAR_LOOKUP_BUFFER_SIZE] PROGMEM = 
+static const float humidityLookup[HUMIDITY_LOOKUP_BUFFER_SIZE] PROGMEM = 
 {
 	0.00,
 	0.05,
