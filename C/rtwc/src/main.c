@@ -51,7 +51,7 @@ int main(void)
 	scheduleTask(TASK_HEARTBEAT, 2950, NULL);
 	scheduleTask(TASK_ANEMOMETER, 1000, NULL);
 	scheduleTask(TASK_RAINGUAGE, 3600000, NULL); // Schedule in 1 hour...
-	scheduleTask(TASK_TX, 1000, NULL);
+	scheduleTask(TASK_TX, 5000, NULL);
 
 	/*
 	** Start the scheduler...
