@@ -1,6 +1,6 @@
 #ifndef _INCL_THERMOMETER
 #define _INCL_THERMOMETER
 
-float getTemperature();
+char * getTemperature();
 
 #endif

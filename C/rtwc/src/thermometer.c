@@ -8,9 +8,9 @@
 #include "thermometer.h"
 #include "templookup.h"
 
-float getTemperature()
+char * getTemperature()
 {
-	float			temperature;
+	char *			temperature;
 	int16_t			avgPositiveTempADC;
 	int16_t			avgNegativeTempADC;
 	int16_t			t;
@@ -20,7 +20,7 @@ float getTemperature()
 	
 	t = (avgPositiveTempADC - avgNegativeTempADC) + TEMP_INDEX_OFFSET;
 	
-	temperature = pgm_read_float(&(tempLookup[t]));
+	temperature = pgm_read_ptr(&(tempLookup[t]));
 	
 	return temperature;
 }

@@ -43,7 +43,7 @@ SIZETOOL=avr-size
 UPLOADTOOL=../upload.sh
 
 # C compiler flags
-CFLAGS=-c -g -Os -Wall -ffunction-sections -fdata-sections -mmcu=$(DEVICE) -DF_CPU=16000000L -DARDUINO=10804 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR
+CFLAGS=-c -Os -Wall -ffunction-sections -fdata-sections -mmcu=$(DEVICE) -DF_CPU=16000000L -DARDUINO=10804 -DARDUINO_AVR_UNO -DARDUINO_ARCH_AVR
 
 # Linker flags
 LFLAGS=-fuse-linker-plugin -Wl,--gc-sections -mmcu=$(DEVICE)

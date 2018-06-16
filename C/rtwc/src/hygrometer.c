@@ -8,14 +8,14 @@
 #include "hygrometer.h"
 #include "humiditylookup.h"
 
-float getHumidity()
+char * getHumidity()
 {
-	float		humidity;
+	char *		humidity;
 	uint16_t	avgHumidityADC;
 	
 	avgHumidityADC = getADCAverage(ADC_CHANNEL3) - ADC_HUMIDITY_OFFSET;
 	
-	humidity = pgm_read_float(&(humidityLookup[avgHumidityADC]));
+	humidity = pgm_read_ptr(&(humidityLookup[avgHumidityADC]));
 	
 	return humidity;
 }

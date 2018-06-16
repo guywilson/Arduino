@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
 
 #include "scheduler.h"
 #include "serial_atmega328p.h"
@@ -15,49 +16,67 @@
 void TxTask(PTASKPARM p)
 {
 	char		szBuffer[64];
+	char		szTemperature[8];
+	char		szPressure[8];
+	char		szHumidity[8];
+	char		szWindSpeed[8];
+	char		szRainfall[8];
 	int			len;
 	int			txStrLen = 0;
 	int			i = 0;
-	
+
+	strcpy(szTemperature, getTemperature());
+	strcpy(szPressure, getPressure());
+	strcpy(szHumidity, getHumidity());
+	strcpy(szWindSpeed, getAvgWindSpeed());
+	strcpy(szRainfall, getAvgRainfall());
+
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 't';
 	szBuffer[i++] = ':';
-	len = doubleToString(&szBuffer[i], getTemperature());
+	strcpy(&szBuffer[i], szTemperature);
+	len = strlen(szTemperature);
 	szBuffer[i + len] = '>';
-	i++;
+	i += len + 1;
 	txStrLen += len + 4;
 	
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 'p';
 	szBuffer[i++] = ':';
-	len = doubleToString(&szBuffer[i], getPressure());
+	strcpy(&szBuffer[i], szPressure);
+	len = strlen(szPressure);
 	szBuffer[i + len] = '>';
-	i++;
+	i += len + 1;
 	txStrLen += len + 4;
 	
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 'h';
 	szBuffer[i++] = ':';
-	len = doubleToString(&szBuffer[i], getHumidity());
+	strcpy(&szBuffer[i], szHumidity);
+	len = strlen(szHumidity);
 	szBuffer[i + len] = '>';
-	i++;
+	i += len + 1;
 	txStrLen += len + 4;
 	
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 'w';
 	szBuffer[i++] = ':';
-	len = doubleToString(&szBuffer[i], getAvgWindSpeed());
+	strcpy(&szBuffer[i], szWindSpeed);
+	len = strlen(szWindSpeed);
 	szBuffer[i + len] = '>';
-	i++;
+	i += len + 1;
 	txStrLen += len + 4;
 	
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 'r';
 	szBuffer[i++] = ':';
-	len = doubleToString(&szBuffer[i], getAvgRainfall());
+	strcpy(&szBuffer[i], szRainfall);
+	len = strlen(szRainfall);
 	szBuffer[i + len] = '>';
-	i++;
+	i += len + 1;
 	txStrLen += len + 4;
+	
+	szBuffer[i] = 0;
 
 	txstr(szBuffer, txStrLen);
 	

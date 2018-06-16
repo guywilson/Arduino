@@ -12,7 +12,6 @@
 #include "serial_atmega328p.h"
 
 uint16_t	rpsBuffer[WIND_SPEED_AVG_COUNT];
-uint16_t	maxRPS = 0;
 
 void anemometerTask(PTASKPARM p)
 {
@@ -63,14 +62,6 @@ void anemometerTask(PTASKPARM p)
 	}
 	else {
 		revolutionsPerSecond = rpsCount;
-	
-		/*
-		** Keep track of the maximum value. In terms of
-		** wind speed, this gives us the maximum 'gust' speed
-		*/
-		if (revolutionsPerSecond > maxRPS) {
-			maxRPS = revolutionsPerSecond;
-		}
 
 		rpsBuffer[i] = revolutionsPerSecond;
 
@@ -100,14 +91,9 @@ uint16_t getAvgRPS(void)
 	return avgRPS;
 }
 
-uint16_t getMaxRPS(void)
+char * getAvgWindSpeed(void)
 {
-	return maxRPS;
-}
-
-float getAvgWindSpeed(void)
-{
-	float			avgSpeed;
+	char *			avgSpeed;
 	uint16_t		avgRPS;
 	
 	avgRPS = getAvgRPS();
@@ -116,20 +102,7 @@ float getAvgWindSpeed(void)
 		avgRPS = KPH_LOOKUP_BUFFER_SIZE - 1;
 	}
 	
-	avgSpeed = pgm_read_float(&(kphLookup[avgRPS]));
+	avgSpeed = pgm_read_ptr(&(kphLookup[avgRPS]));
 	
 	return avgSpeed;
-}
-
-float getMaxWindSpeed(void)
-{
-	float			maxSpeed;
-	
-	if (maxRPS >= KPH_LOOKUP_BUFFER_SIZE) {
-		maxRPS = KPH_LOOKUP_BUFFER_SIZE - 1;
-	}
-	
-	maxSpeed = pgm_read_float(&(kphLookup[maxRPS]));
-	
-	return maxSpeed;
 }

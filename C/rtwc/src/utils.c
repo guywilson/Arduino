@@ -7,8 +7,8 @@
 **
 ** Converts a floating point number to a null terminated string.
 **
-** Supports positive floating point numbers up to 429 496 729 and only converts 
-** 1 decimal place to the string.
+** Supports positive floating point numbers up to 29 496 729 and only converts 
+** 2 decimal place to the string.
 **
 ******************************************************************************/
 int doubleToString(char * dest, double value)

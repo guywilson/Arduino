@@ -33,10 +33,10 @@ void setupSerial()
 	UCSR0C = _BV(UCSZ01) | _BV(UCSZ00) | _BV(USBS0);
 	
 	/*
-	** Enable Rx & Tx
-	** Enable Rx & Tx interrupts
+	** Enable Tx
+	** Enable Tx interrupts
 	*/
-	UCSR0B = _BV(RXEN0) | _BV(TXEN0) | _BV(RXCIE0) | _BV(TXCIE0);
+	UCSR0B = _BV(TXEN0) | _BV(TXCIE0);
 }
 
 void enableTxInterrupt()

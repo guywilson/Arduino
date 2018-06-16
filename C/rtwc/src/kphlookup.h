@@ -34,264 +34,521 @@
 ** macro to get the far pointer to the flash ROM.
 **
 ******************************************************************************/
-static const float kphLookup[KPH_LOOKUP_BUFFER_SIZE] PROGMEM = 
+const char windSpeed0[] PROGMEM = "0.00";
+const char windSpeed1[] PROGMEM = "1.13";
+const char windSpeed2[] PROGMEM = "2.26";
+const char windSpeed3[] PROGMEM = "3.39";
+const char windSpeed4[] PROGMEM = "4.52";
+const char windSpeed5[] PROGMEM = "5.65";
+const char windSpeed6[] PROGMEM = "6.79";
+const char windSpeed7[] PROGMEM = "7.92";
+const char windSpeed8[] PROGMEM = "9.05";
+const char windSpeed9[] PROGMEM = "10.18";
+const char windSpeed10[] PROGMEM = "11.31";
+const char windSpeed11[] PROGMEM = "12.44";
+const char windSpeed12[] PROGMEM = "13.57";
+const char windSpeed13[] PROGMEM = "14.70";
+const char windSpeed14[] PROGMEM = "15.83";
+const char windSpeed15[] PROGMEM = "16.96";
+const char windSpeed16[] PROGMEM = "18.10";
+const char windSpeed17[] PROGMEM = "19.23";
+const char windSpeed18[] PROGMEM = "20.36";
+const char windSpeed19[] PROGMEM = "21.49";
+const char windSpeed20[] PROGMEM = "22.62";
+const char windSpeed21[] PROGMEM = "23.75";
+const char windSpeed22[] PROGMEM = "24.88";
+const char windSpeed23[] PROGMEM = "26.01";
+const char windSpeed24[] PROGMEM = "27.14";
+const char windSpeed25[] PROGMEM = "28.27";
+const char windSpeed26[] PROGMEM = "29.41";
+const char windSpeed27[] PROGMEM = "30.54";
+const char windSpeed28[] PROGMEM = "31.67";
+const char windSpeed29[] PROGMEM = "32.80";
+const char windSpeed30[] PROGMEM = "33.93";
+const char windSpeed31[] PROGMEM = "35.06";
+const char windSpeed32[] PROGMEM = "36.19";
+const char windSpeed33[] PROGMEM = "37.32";
+const char windSpeed34[] PROGMEM = "38.45";
+const char windSpeed35[] PROGMEM = "39.58";
+const char windSpeed36[] PROGMEM = "40.72";
+const char windSpeed37[] PROGMEM = "41.85";
+const char windSpeed38[] PROGMEM = "42.98";
+const char windSpeed39[] PROGMEM = "44.11";
+const char windSpeed40[] PROGMEM = "45.24";
+const char windSpeed41[] PROGMEM = "46.37";
+const char windSpeed42[] PROGMEM = "47.50";
+const char windSpeed43[] PROGMEM = "48.63";
+const char windSpeed44[] PROGMEM = "49.76";
+const char windSpeed45[] PROGMEM = "50.89";
+const char windSpeed46[] PROGMEM = "52.02";
+const char windSpeed47[] PROGMEM = "53.16";
+const char windSpeed48[] PROGMEM = "54.29";
+const char windSpeed49[] PROGMEM = "55.42";
+const char windSpeed50[] PROGMEM = "56.55";
+const char windSpeed51[] PROGMEM = "57.68";
+const char windSpeed52[] PROGMEM = "58.81";
+const char windSpeed53[] PROGMEM = "59.94";
+const char windSpeed54[] PROGMEM = "61.07";
+const char windSpeed55[] PROGMEM = "62.20";
+const char windSpeed56[] PROGMEM = "63.33";
+const char windSpeed57[] PROGMEM = "64.47";
+const char windSpeed58[] PROGMEM = "65.60";
+const char windSpeed59[] PROGMEM = "66.73";
+const char windSpeed60[] PROGMEM = "67.86";
+const char windSpeed61[] PROGMEM = "68.99";
+const char windSpeed62[] PROGMEM = "70.12";
+const char windSpeed63[] PROGMEM = "71.25";
+const char windSpeed64[] PROGMEM = "72.38";
+const char windSpeed65[] PROGMEM = "73.51";
+const char windSpeed66[] PROGMEM = "74.64";
+const char windSpeed67[] PROGMEM = "75.78";
+const char windSpeed68[] PROGMEM = "76.91";
+const char windSpeed69[] PROGMEM = "78.04";
+const char windSpeed70[] PROGMEM = "79.17";
+const char windSpeed71[] PROGMEM = "80.30";
+const char windSpeed72[] PROGMEM = "81.43";
+const char windSpeed73[] PROGMEM = "82.56";
+const char windSpeed74[] PROGMEM = "83.69";
+const char windSpeed75[] PROGMEM = "84.82";
+const char windSpeed76[] PROGMEM = "85.95";
+const char windSpeed77[] PROGMEM = "87.08";
+const char windSpeed78[] PROGMEM = "88.22";
+const char windSpeed79[] PROGMEM = "89.35";
+const char windSpeed80[] PROGMEM = "90.48";
+const char windSpeed81[] PROGMEM = "91.61";
+const char windSpeed82[] PROGMEM = "92.74";
+const char windSpeed83[] PROGMEM = "93.87";
+const char windSpeed84[] PROGMEM = "95.00";
+const char windSpeed85[] PROGMEM = "96.13";
+const char windSpeed86[] PROGMEM = "97.26";
+const char windSpeed87[] PROGMEM = "98.39";
+const char windSpeed88[] PROGMEM = "99.53";
+const char windSpeed89[] PROGMEM = "100.66";
+const char windSpeed90[] PROGMEM = "101.79";
+const char windSpeed91[] PROGMEM = "102.92";
+const char windSpeed92[] PROGMEM = "104.05";
+const char windSpeed93[] PROGMEM = "105.18";
+const char windSpeed94[] PROGMEM = "106.31";
+const char windSpeed95[] PROGMEM = "107.44";
+const char windSpeed96[] PROGMEM = "108.57";
+const char windSpeed97[] PROGMEM = "109.70";
+const char windSpeed98[] PROGMEM = "110.84";
+const char windSpeed99[] PROGMEM = "111.97";
+const char windSpeed100[] PROGMEM = "113.10";
+const char windSpeed101[] PROGMEM = "114.23";
+const char windSpeed102[] PROGMEM = "115.36";
+const char windSpeed103[] PROGMEM = "116.49";
+const char windSpeed104[] PROGMEM = "117.62";
+const char windSpeed105[] PROGMEM = "118.75";
+const char windSpeed106[] PROGMEM = "119.88";
+const char windSpeed107[] PROGMEM = "121.01";
+const char windSpeed108[] PROGMEM = "122.15";
+const char windSpeed109[] PROGMEM = "123.28";
+const char windSpeed110[] PROGMEM = "124.41";
+const char windSpeed111[] PROGMEM = "125.54";
+const char windSpeed112[] PROGMEM = "126.67";
+const char windSpeed113[] PROGMEM = "127.80";
+const char windSpeed114[] PROGMEM = "128.93";
+const char windSpeed115[] PROGMEM = "130.06";
+const char windSpeed116[] PROGMEM = "131.19";
+const char windSpeed117[] PROGMEM = "132.32";
+const char windSpeed118[] PROGMEM = "133.45";
+const char windSpeed119[] PROGMEM = "134.59";
+const char windSpeed120[] PROGMEM = "135.72";
+const char windSpeed121[] PROGMEM = "136.85";
+const char windSpeed122[] PROGMEM = "137.98";
+const char windSpeed123[] PROGMEM = "139.11";
+const char windSpeed124[] PROGMEM = "140.24";
+const char windSpeed125[] PROGMEM = "141.37";
+const char windSpeed126[] PROGMEM = "142.50";
+const char windSpeed127[] PROGMEM = "143.63";
+const char windSpeed128[] PROGMEM = "144.76";
+const char windSpeed129[] PROGMEM = "145.90";
+const char windSpeed130[] PROGMEM = "147.03";
+const char windSpeed131[] PROGMEM = "148.16";
+const char windSpeed132[] PROGMEM = "149.29";
+const char windSpeed133[] PROGMEM = "150.42";
+const char windSpeed134[] PROGMEM = "151.55";
+const char windSpeed135[] PROGMEM = "152.68";
+const char windSpeed136[] PROGMEM = "153.81";
+const char windSpeed137[] PROGMEM = "154.94";
+const char windSpeed138[] PROGMEM = "156.07";
+const char windSpeed139[] PROGMEM = "157.21";
+const char windSpeed140[] PROGMEM = "158.34";
+const char windSpeed141[] PROGMEM = "159.47";
+const char windSpeed142[] PROGMEM = "160.60";
+const char windSpeed143[] PROGMEM = "161.73";
+const char windSpeed144[] PROGMEM = "162.86";
+const char windSpeed145[] PROGMEM = "163.99";
+const char windSpeed146[] PROGMEM = "165.12";
+const char windSpeed147[] PROGMEM = "166.25";
+const char windSpeed148[] PROGMEM = "167.38";
+const char windSpeed149[] PROGMEM = "168.52";
+const char windSpeed150[] PROGMEM = "169.65";
+const char windSpeed151[] PROGMEM = "170.78";
+const char windSpeed152[] PROGMEM = "171.91";
+const char windSpeed153[] PROGMEM = "173.04";
+const char windSpeed154[] PROGMEM = "174.17";
+const char windSpeed155[] PROGMEM = "175.30";
+const char windSpeed156[] PROGMEM = "176.43";
+const char windSpeed157[] PROGMEM = "177.56";
+const char windSpeed158[] PROGMEM = "178.69";
+const char windSpeed159[] PROGMEM = "179.82";
+const char windSpeed160[] PROGMEM = "180.96";
+const char windSpeed161[] PROGMEM = "182.09";
+const char windSpeed162[] PROGMEM = "183.22";
+const char windSpeed163[] PROGMEM = "184.35";
+const char windSpeed164[] PROGMEM = "185.48";
+const char windSpeed165[] PROGMEM = "186.61";
+const char windSpeed166[] PROGMEM = "187.74";
+const char windSpeed167[] PROGMEM = "188.87";
+const char windSpeed168[] PROGMEM = "190.00";
+const char windSpeed169[] PROGMEM = "191.13";
+const char windSpeed170[] PROGMEM = "192.27";
+const char windSpeed171[] PROGMEM = "193.40";
+const char windSpeed172[] PROGMEM = "194.53";
+const char windSpeed173[] PROGMEM = "195.66";
+const char windSpeed174[] PROGMEM = "196.79";
+const char windSpeed175[] PROGMEM = "197.92";
+const char windSpeed176[] PROGMEM = "199.05";
+const char windSpeed177[] PROGMEM = "200.18";
+const char windSpeed178[] PROGMEM = "201.31";
+const char windSpeed179[] PROGMEM = "202.44";
+const char windSpeed180[] PROGMEM = "203.58";
+const char windSpeed181[] PROGMEM = "204.71";
+const char windSpeed182[] PROGMEM = "205.84";
+const char windSpeed183[] PROGMEM = "206.97";
+const char windSpeed184[] PROGMEM = "208.10";
+const char windSpeed185[] PROGMEM = "209.23";
+const char windSpeed186[] PROGMEM = "210.36";
+const char windSpeed187[] PROGMEM = "211.49";
+const char windSpeed188[] PROGMEM = "212.62";
+const char windSpeed189[] PROGMEM = "213.75";
+const char windSpeed190[] PROGMEM = "214.88";
+const char windSpeed191[] PROGMEM = "216.02";
+const char windSpeed192[] PROGMEM = "217.15";
+const char windSpeed193[] PROGMEM = "218.28";
+const char windSpeed194[] PROGMEM = "219.41";
+const char windSpeed195[] PROGMEM = "220.54";
+const char windSpeed196[] PROGMEM = "221.67";
+const char windSpeed197[] PROGMEM = "222.80";
+const char windSpeed198[] PROGMEM = "223.93";
+const char windSpeed199[] PROGMEM = "225.06";
+const char windSpeed200[] PROGMEM = "226.19";
+const char windSpeed201[] PROGMEM = "227.33";
+const char windSpeed202[] PROGMEM = "228.46";
+const char windSpeed203[] PROGMEM = "229.59";
+const char windSpeed204[] PROGMEM = "230.72";
+const char windSpeed205[] PROGMEM = "231.85";
+const char windSpeed206[] PROGMEM = "232.98";
+const char windSpeed207[] PROGMEM = "234.11";
+const char windSpeed208[] PROGMEM = "235.24";
+const char windSpeed209[] PROGMEM = "236.37";
+const char windSpeed210[] PROGMEM = "237.50";
+const char windSpeed211[] PROGMEM = "238.64";
+const char windSpeed212[] PROGMEM = "239.77";
+const char windSpeed213[] PROGMEM = "240.90";
+const char windSpeed214[] PROGMEM = "242.03";
+const char windSpeed215[] PROGMEM = "243.16";
+const char windSpeed216[] PROGMEM = "244.29";
+const char windSpeed217[] PROGMEM = "245.42";
+const char windSpeed218[] PROGMEM = "246.55";
+const char windSpeed219[] PROGMEM = "247.68";
+const char windSpeed220[] PROGMEM = "248.81";
+const char windSpeed221[] PROGMEM = "249.95";
+const char windSpeed222[] PROGMEM = "251.08";
+const char windSpeed223[] PROGMEM = "252.21";
+const char windSpeed224[] PROGMEM = "253.34";
+const char windSpeed225[] PROGMEM = "254.47";
+const char windSpeed226[] PROGMEM = "255.60";
+const char windSpeed227[] PROGMEM = "256.73";
+const char windSpeed228[] PROGMEM = "257.86";
+const char windSpeed229[] PROGMEM = "258.99";
+const char windSpeed230[] PROGMEM = "260.12";
+const char windSpeed231[] PROGMEM = "261.25";
+const char windSpeed232[] PROGMEM = "262.39";
+const char windSpeed233[] PROGMEM = "263.52";
+const char windSpeed234[] PROGMEM = "264.65";
+const char windSpeed235[] PROGMEM = "265.78";
+const char windSpeed236[] PROGMEM = "266.91";
+const char windSpeed237[] PROGMEM = "268.04";
+const char windSpeed238[] PROGMEM = "269.17";
+const char windSpeed239[] PROGMEM = "270.30";
+const char windSpeed240[] PROGMEM = "271.43";
+const char windSpeed241[] PROGMEM = "272.56";
+const char windSpeed242[] PROGMEM = "273.70";
+const char windSpeed243[] PROGMEM = "274.83";
+const char windSpeed244[] PROGMEM = "275.96";
+const char windSpeed245[] PROGMEM = "277.09";
+const char windSpeed246[] PROGMEM = "278.22";
+const char windSpeed247[] PROGMEM = "279.35";
+const char windSpeed248[] PROGMEM = "280.48";
+const char windSpeed249[] PROGMEM = "281.61";
+const char windSpeed250[] PROGMEM = "282.74";
+const char windSpeed251[] PROGMEM = "283.87";
+const char windSpeed252[] PROGMEM = "285.01";
+const char windSpeed253[] PROGMEM = "286.14";
+const char windSpeed254[] PROGMEM = "287.27";
+const char windSpeed255[] PROGMEM = "288.40";
+
+static PGM_P const kphLookup[KPH_LOOKUP_BUFFER_SIZE] PROGMEM = 
 {
-	0.0,
-	RPS_TO_KPH_SCALE_FACTOR,
-	RPS_TO_KPH_SCALE_FACTOR * 2,
-	RPS_TO_KPH_SCALE_FACTOR * 3,
-	RPS_TO_KPH_SCALE_FACTOR * 4,
-	RPS_TO_KPH_SCALE_FACTOR * 5,
-	RPS_TO_KPH_SCALE_FACTOR * 6,
-	RPS_TO_KPH_SCALE_FACTOR * 7,
-	RPS_TO_KPH_SCALE_FACTOR * 8,
-	RPS_TO_KPH_SCALE_FACTOR * 9,
-	RPS_TO_KPH_SCALE_FACTOR * 10,
-	RPS_TO_KPH_SCALE_FACTOR * 11,
-	RPS_TO_KPH_SCALE_FACTOR * 12,
-	RPS_TO_KPH_SCALE_FACTOR * 13,
-	RPS_TO_KPH_SCALE_FACTOR * 14,
-	RPS_TO_KPH_SCALE_FACTOR * 15,
-	RPS_TO_KPH_SCALE_FACTOR * 16,
-	RPS_TO_KPH_SCALE_FACTOR * 17,
-	RPS_TO_KPH_SCALE_FACTOR * 18,
-	RPS_TO_KPH_SCALE_FACTOR * 19,
-	RPS_TO_KPH_SCALE_FACTOR * 20,
-	RPS_TO_KPH_SCALE_FACTOR * 21,
-	RPS_TO_KPH_SCALE_FACTOR * 22,
-	RPS_TO_KPH_SCALE_FACTOR * 23,
-	RPS_TO_KPH_SCALE_FACTOR * 24,
-	RPS_TO_KPH_SCALE_FACTOR * 25,
-	RPS_TO_KPH_SCALE_FACTOR * 26,
-	RPS_TO_KPH_SCALE_FACTOR * 27,
-	RPS_TO_KPH_SCALE_FACTOR * 28,
-	RPS_TO_KPH_SCALE_FACTOR * 29,
-	RPS_TO_KPH_SCALE_FACTOR * 30,
-	RPS_TO_KPH_SCALE_FACTOR * 31,
-	RPS_TO_KPH_SCALE_FACTOR * 32,
-	RPS_TO_KPH_SCALE_FACTOR * 33,
-	RPS_TO_KPH_SCALE_FACTOR * 34,
-	RPS_TO_KPH_SCALE_FACTOR * 35,
-	RPS_TO_KPH_SCALE_FACTOR * 36,
-	RPS_TO_KPH_SCALE_FACTOR * 37,
-	RPS_TO_KPH_SCALE_FACTOR * 38,
-	RPS_TO_KPH_SCALE_FACTOR * 39,
-	RPS_TO_KPH_SCALE_FACTOR * 40,
-	RPS_TO_KPH_SCALE_FACTOR * 41,
-	RPS_TO_KPH_SCALE_FACTOR * 42,
-	RPS_TO_KPH_SCALE_FACTOR * 43,
-	RPS_TO_KPH_SCALE_FACTOR * 44,
-	RPS_TO_KPH_SCALE_FACTOR * 45,
-	RPS_TO_KPH_SCALE_FACTOR * 46,
-	RPS_TO_KPH_SCALE_FACTOR * 47,
-	RPS_TO_KPH_SCALE_FACTOR * 48,
-	RPS_TO_KPH_SCALE_FACTOR * 49,
-	RPS_TO_KPH_SCALE_FACTOR * 50,
-	RPS_TO_KPH_SCALE_FACTOR * 51,
-	RPS_TO_KPH_SCALE_FACTOR * 52,
-	RPS_TO_KPH_SCALE_FACTOR * 53,
-	RPS_TO_KPH_SCALE_FACTOR * 54,
-	RPS_TO_KPH_SCALE_FACTOR * 55,
-	RPS_TO_KPH_SCALE_FACTOR * 56,
-	RPS_TO_KPH_SCALE_FACTOR * 57,
-	RPS_TO_KPH_SCALE_FACTOR * 58,
-	RPS_TO_KPH_SCALE_FACTOR * 59,
-	RPS_TO_KPH_SCALE_FACTOR * 60,
-	RPS_TO_KPH_SCALE_FACTOR * 61,
-	RPS_TO_KPH_SCALE_FACTOR * 62,
-	RPS_TO_KPH_SCALE_FACTOR * 63,
-	RPS_TO_KPH_SCALE_FACTOR * 64,
-	RPS_TO_KPH_SCALE_FACTOR * 65,
-	RPS_TO_KPH_SCALE_FACTOR * 66,
-	RPS_TO_KPH_SCALE_FACTOR * 67,
-	RPS_TO_KPH_SCALE_FACTOR * 68,
-	RPS_TO_KPH_SCALE_FACTOR * 69,
-	RPS_TO_KPH_SCALE_FACTOR * 70,
-	RPS_TO_KPH_SCALE_FACTOR * 71,
-	RPS_TO_KPH_SCALE_FACTOR * 72,
-	RPS_TO_KPH_SCALE_FACTOR * 73,
-	RPS_TO_KPH_SCALE_FACTOR * 74,
-	RPS_TO_KPH_SCALE_FACTOR * 75,
-	RPS_TO_KPH_SCALE_FACTOR * 76,
-	RPS_TO_KPH_SCALE_FACTOR * 77,
-	RPS_TO_KPH_SCALE_FACTOR * 78,
-	RPS_TO_KPH_SCALE_FACTOR * 79,
-	RPS_TO_KPH_SCALE_FACTOR * 80,
-	RPS_TO_KPH_SCALE_FACTOR * 81,
-	RPS_TO_KPH_SCALE_FACTOR * 82,
-	RPS_TO_KPH_SCALE_FACTOR * 83,
-	RPS_TO_KPH_SCALE_FACTOR * 84,
-	RPS_TO_KPH_SCALE_FACTOR * 85,
-	RPS_TO_KPH_SCALE_FACTOR * 86,
-	RPS_TO_KPH_SCALE_FACTOR * 87,
-	RPS_TO_KPH_SCALE_FACTOR * 88,
-	RPS_TO_KPH_SCALE_FACTOR * 89,
-	RPS_TO_KPH_SCALE_FACTOR * 90,
-	RPS_TO_KPH_SCALE_FACTOR * 91,
-	RPS_TO_KPH_SCALE_FACTOR * 92,
-	RPS_TO_KPH_SCALE_FACTOR * 93,
-	RPS_TO_KPH_SCALE_FACTOR * 94,
-	RPS_TO_KPH_SCALE_FACTOR * 95,
-	RPS_TO_KPH_SCALE_FACTOR * 96,
-	RPS_TO_KPH_SCALE_FACTOR * 97,
-	RPS_TO_KPH_SCALE_FACTOR * 98,
-	RPS_TO_KPH_SCALE_FACTOR * 99,
-	RPS_TO_KPH_SCALE_FACTOR * 100,
-	RPS_TO_KPH_SCALE_FACTOR * 101,
-	RPS_TO_KPH_SCALE_FACTOR * 102,
-	RPS_TO_KPH_SCALE_FACTOR * 103,
-	RPS_TO_KPH_SCALE_FACTOR * 104,
-	RPS_TO_KPH_SCALE_FACTOR * 105,
-	RPS_TO_KPH_SCALE_FACTOR * 106,
-	RPS_TO_KPH_SCALE_FACTOR * 107,
-	RPS_TO_KPH_SCALE_FACTOR * 108,
-	RPS_TO_KPH_SCALE_FACTOR * 109,
-	RPS_TO_KPH_SCALE_FACTOR * 110,
-	RPS_TO_KPH_SCALE_FACTOR * 111,
-	RPS_TO_KPH_SCALE_FACTOR * 112,
-	RPS_TO_KPH_SCALE_FACTOR * 113,
-	RPS_TO_KPH_SCALE_FACTOR * 114,
-	RPS_TO_KPH_SCALE_FACTOR * 115,
-	RPS_TO_KPH_SCALE_FACTOR * 116,
-	RPS_TO_KPH_SCALE_FACTOR * 117,
-	RPS_TO_KPH_SCALE_FACTOR * 118,
-	RPS_TO_KPH_SCALE_FACTOR * 119,
-	RPS_TO_KPH_SCALE_FACTOR * 120,
-	RPS_TO_KPH_SCALE_FACTOR * 121,
-	RPS_TO_KPH_SCALE_FACTOR * 122,
-	RPS_TO_KPH_SCALE_FACTOR * 123,
-	RPS_TO_KPH_SCALE_FACTOR * 124,
-	RPS_TO_KPH_SCALE_FACTOR * 125,
-	RPS_TO_KPH_SCALE_FACTOR * 126,
-	RPS_TO_KPH_SCALE_FACTOR * 127,
-	RPS_TO_KPH_SCALE_FACTOR * 128,
-	RPS_TO_KPH_SCALE_FACTOR * 129,
-	RPS_TO_KPH_SCALE_FACTOR * 130,
-	RPS_TO_KPH_SCALE_FACTOR * 131,
-	RPS_TO_KPH_SCALE_FACTOR * 132,
-	RPS_TO_KPH_SCALE_FACTOR * 133,
-	RPS_TO_KPH_SCALE_FACTOR * 134,
-	RPS_TO_KPH_SCALE_FACTOR * 135,
-	RPS_TO_KPH_SCALE_FACTOR * 136,
-	RPS_TO_KPH_SCALE_FACTOR * 137,
-	RPS_TO_KPH_SCALE_FACTOR * 138,
-	RPS_TO_KPH_SCALE_FACTOR * 139,
-	RPS_TO_KPH_SCALE_FACTOR * 140,
-	RPS_TO_KPH_SCALE_FACTOR * 141,
-	RPS_TO_KPH_SCALE_FACTOR * 142,
-	RPS_TO_KPH_SCALE_FACTOR * 143,
-	RPS_TO_KPH_SCALE_FACTOR * 144,
-	RPS_TO_KPH_SCALE_FACTOR * 145,
-	RPS_TO_KPH_SCALE_FACTOR * 146,
-	RPS_TO_KPH_SCALE_FACTOR * 147,
-	RPS_TO_KPH_SCALE_FACTOR * 148,
-	RPS_TO_KPH_SCALE_FACTOR * 149,
-	RPS_TO_KPH_SCALE_FACTOR * 150,
-	RPS_TO_KPH_SCALE_FACTOR * 151,
-	RPS_TO_KPH_SCALE_FACTOR * 152,
-	RPS_TO_KPH_SCALE_FACTOR * 153,
-	RPS_TO_KPH_SCALE_FACTOR * 154,
-	RPS_TO_KPH_SCALE_FACTOR * 155,
-	RPS_TO_KPH_SCALE_FACTOR * 156,
-	RPS_TO_KPH_SCALE_FACTOR * 157,
-	RPS_TO_KPH_SCALE_FACTOR * 158,
-	RPS_TO_KPH_SCALE_FACTOR * 159,
-	RPS_TO_KPH_SCALE_FACTOR * 160,
-	RPS_TO_KPH_SCALE_FACTOR * 161,
-	RPS_TO_KPH_SCALE_FACTOR * 162,
-	RPS_TO_KPH_SCALE_FACTOR * 163,
-	RPS_TO_KPH_SCALE_FACTOR * 164,
-	RPS_TO_KPH_SCALE_FACTOR * 165,
-	RPS_TO_KPH_SCALE_FACTOR * 166,
-	RPS_TO_KPH_SCALE_FACTOR * 167,
-	RPS_TO_KPH_SCALE_FACTOR * 168,
-	RPS_TO_KPH_SCALE_FACTOR * 169,
-	RPS_TO_KPH_SCALE_FACTOR * 170,
-	RPS_TO_KPH_SCALE_FACTOR * 171,
-	RPS_TO_KPH_SCALE_FACTOR * 172,
-	RPS_TO_KPH_SCALE_FACTOR * 173,
-	RPS_TO_KPH_SCALE_FACTOR * 174,
-	RPS_TO_KPH_SCALE_FACTOR * 175,
-	RPS_TO_KPH_SCALE_FACTOR * 176,
-	RPS_TO_KPH_SCALE_FACTOR * 177,
-	RPS_TO_KPH_SCALE_FACTOR * 178,
-	RPS_TO_KPH_SCALE_FACTOR * 179,
-	RPS_TO_KPH_SCALE_FACTOR * 180,
-	RPS_TO_KPH_SCALE_FACTOR * 181,
-	RPS_TO_KPH_SCALE_FACTOR * 182,
-	RPS_TO_KPH_SCALE_FACTOR * 183,
-	RPS_TO_KPH_SCALE_FACTOR * 184,
-	RPS_TO_KPH_SCALE_FACTOR * 185,
-	RPS_TO_KPH_SCALE_FACTOR * 186,
-	RPS_TO_KPH_SCALE_FACTOR * 187,
-	RPS_TO_KPH_SCALE_FACTOR * 188,
-	RPS_TO_KPH_SCALE_FACTOR * 189,
-	RPS_TO_KPH_SCALE_FACTOR * 190,
-	RPS_TO_KPH_SCALE_FACTOR * 191,
-	RPS_TO_KPH_SCALE_FACTOR * 192,
-	RPS_TO_KPH_SCALE_FACTOR * 193,
-	RPS_TO_KPH_SCALE_FACTOR * 194,
-	RPS_TO_KPH_SCALE_FACTOR * 195,
-	RPS_TO_KPH_SCALE_FACTOR * 196,
-	RPS_TO_KPH_SCALE_FACTOR * 197,
-	RPS_TO_KPH_SCALE_FACTOR * 198,
-	RPS_TO_KPH_SCALE_FACTOR * 199,
-	RPS_TO_KPH_SCALE_FACTOR * 200,
-	RPS_TO_KPH_SCALE_FACTOR * 201,
-	RPS_TO_KPH_SCALE_FACTOR * 202,
-	RPS_TO_KPH_SCALE_FACTOR * 203,
-	RPS_TO_KPH_SCALE_FACTOR * 204,
-	RPS_TO_KPH_SCALE_FACTOR * 205,
-	RPS_TO_KPH_SCALE_FACTOR * 206,
-	RPS_TO_KPH_SCALE_FACTOR * 207,
-	RPS_TO_KPH_SCALE_FACTOR * 208,
-	RPS_TO_KPH_SCALE_FACTOR * 209,
-	RPS_TO_KPH_SCALE_FACTOR * 210,
-	RPS_TO_KPH_SCALE_FACTOR * 211,
-	RPS_TO_KPH_SCALE_FACTOR * 212,
-	RPS_TO_KPH_SCALE_FACTOR * 213,
-	RPS_TO_KPH_SCALE_FACTOR * 214,
-	RPS_TO_KPH_SCALE_FACTOR * 215,
-	RPS_TO_KPH_SCALE_FACTOR * 216,
-	RPS_TO_KPH_SCALE_FACTOR * 217,
-	RPS_TO_KPH_SCALE_FACTOR * 218,
-	RPS_TO_KPH_SCALE_FACTOR * 219,
-	RPS_TO_KPH_SCALE_FACTOR * 220,
-	RPS_TO_KPH_SCALE_FACTOR * 221,
-	RPS_TO_KPH_SCALE_FACTOR * 222,
-	RPS_TO_KPH_SCALE_FACTOR * 223,
-	RPS_TO_KPH_SCALE_FACTOR * 224,
-	RPS_TO_KPH_SCALE_FACTOR * 225,
-	RPS_TO_KPH_SCALE_FACTOR * 226,
-	RPS_TO_KPH_SCALE_FACTOR * 227,
-	RPS_TO_KPH_SCALE_FACTOR * 228,
-	RPS_TO_KPH_SCALE_FACTOR * 229,
-	RPS_TO_KPH_SCALE_FACTOR * 230,
-	RPS_TO_KPH_SCALE_FACTOR * 231,
-	RPS_TO_KPH_SCALE_FACTOR * 232,
-	RPS_TO_KPH_SCALE_FACTOR * 233,
-	RPS_TO_KPH_SCALE_FACTOR * 234,
-	RPS_TO_KPH_SCALE_FACTOR * 235,
-	RPS_TO_KPH_SCALE_FACTOR * 236,
-	RPS_TO_KPH_SCALE_FACTOR * 237,
-	RPS_TO_KPH_SCALE_FACTOR * 238,
-	RPS_TO_KPH_SCALE_FACTOR * 239,
-	RPS_TO_KPH_SCALE_FACTOR * 240,
-	RPS_TO_KPH_SCALE_FACTOR * 241,
-	RPS_TO_KPH_SCALE_FACTOR * 242,
-	RPS_TO_KPH_SCALE_FACTOR * 243,
-	RPS_TO_KPH_SCALE_FACTOR * 244,
-	RPS_TO_KPH_SCALE_FACTOR * 245,
-	RPS_TO_KPH_SCALE_FACTOR * 246,
-	RPS_TO_KPH_SCALE_FACTOR * 247,
-	RPS_TO_KPH_SCALE_FACTOR * 248,
-	RPS_TO_KPH_SCALE_FACTOR * 249,
-	RPS_TO_KPH_SCALE_FACTOR * 250,
-	RPS_TO_KPH_SCALE_FACTOR * 251,
-	RPS_TO_KPH_SCALE_FACTOR * 252,
-	RPS_TO_KPH_SCALE_FACTOR * 253,
-	RPS_TO_KPH_SCALE_FACTOR * 254,
-	RPS_TO_KPH_SCALE_FACTOR * 255
+windSpeed0,
+windSpeed1,
+windSpeed2,
+windSpeed3,
+windSpeed4,
+windSpeed5,
+windSpeed6,
+windSpeed7,
+windSpeed8,
+windSpeed9,
+windSpeed10,
+windSpeed11,
+windSpeed12,
+windSpeed13,
+windSpeed14,
+windSpeed15,
+windSpeed16,
+windSpeed17,
+windSpeed18,
+windSpeed19,
+windSpeed20,
+windSpeed21,
+windSpeed22,
+windSpeed23,
+windSpeed24,
+windSpeed25,
+windSpeed26,
+windSpeed27,
+windSpeed28,
+windSpeed29,
+windSpeed30,
+windSpeed31,
+windSpeed32,
+windSpeed33,
+windSpeed34,
+windSpeed35,
+windSpeed36,
+windSpeed37,
+windSpeed38,
+windSpeed39,
+windSpeed40,
+windSpeed41,
+windSpeed42,
+windSpeed43,
+windSpeed44,
+windSpeed45,
+windSpeed46,
+windSpeed47,
+windSpeed48,
+windSpeed49,
+windSpeed50,
+windSpeed51,
+windSpeed52,
+windSpeed53,
+windSpeed54,
+windSpeed55,
+windSpeed56,
+windSpeed57,
+windSpeed58,
+windSpeed59,
+windSpeed60,
+windSpeed61,
+windSpeed62,
+windSpeed63,
+windSpeed64,
+windSpeed65,
+windSpeed66,
+windSpeed67,
+windSpeed68,
+windSpeed69,
+windSpeed70,
+windSpeed71,
+windSpeed72,
+windSpeed73,
+windSpeed74,
+windSpeed75,
+windSpeed76,
+windSpeed77,
+windSpeed78,
+windSpeed79,
+windSpeed80,
+windSpeed81,
+windSpeed82,
+windSpeed83,
+windSpeed84,
+windSpeed85,
+windSpeed86,
+windSpeed87,
+windSpeed88,
+windSpeed89,
+windSpeed90,
+windSpeed91,
+windSpeed92,
+windSpeed93,
+windSpeed94,
+windSpeed95,
+windSpeed96,
+windSpeed97,
+windSpeed98,
+windSpeed99,
+windSpeed100,
+windSpeed101,
+windSpeed102,
+windSpeed103,
+windSpeed104,
+windSpeed105,
+windSpeed106,
+windSpeed107,
+windSpeed108,
+windSpeed109,
+windSpeed110,
+windSpeed111,
+windSpeed112,
+windSpeed113,
+windSpeed114,
+windSpeed115,
+windSpeed116,
+windSpeed117,
+windSpeed118,
+windSpeed119,
+windSpeed120,
+windSpeed121,
+windSpeed122,
+windSpeed123,
+windSpeed124,
+windSpeed125,
+windSpeed126,
+windSpeed127,
+windSpeed128,
+windSpeed129,
+windSpeed130,
+windSpeed131,
+windSpeed132,
+windSpeed133,
+windSpeed134,
+windSpeed135,
+windSpeed136,
+windSpeed137,
+windSpeed138,
+windSpeed139,
+windSpeed140,
+windSpeed141,
+windSpeed142,
+windSpeed143,
+windSpeed144,
+windSpeed145,
+windSpeed146,
+windSpeed147,
+windSpeed148,
+windSpeed149,
+windSpeed150,
+windSpeed151,
+windSpeed152,
+windSpeed153,
+windSpeed154,
+windSpeed155,
+windSpeed156,
+windSpeed157,
+windSpeed158,
+windSpeed159,
+windSpeed160,
+windSpeed161,
+windSpeed162,
+windSpeed163,
+windSpeed164,
+windSpeed165,
+windSpeed166,
+windSpeed167,
+windSpeed168,
+windSpeed169,
+windSpeed170,
+windSpeed171,
+windSpeed172,
+windSpeed173,
+windSpeed174,
+windSpeed175,
+windSpeed176,
+windSpeed177,
+windSpeed178,
+windSpeed179,
+windSpeed180,
+windSpeed181,
+windSpeed182,
+windSpeed183,
+windSpeed184,
+windSpeed185,
+windSpeed186,
+windSpeed187,
+windSpeed188,
+windSpeed189,
+windSpeed190,
+windSpeed191,
+windSpeed192,
+windSpeed193,
+windSpeed194,
+windSpeed195,
+windSpeed196,
+windSpeed197,
+windSpeed198,
+windSpeed199,
+windSpeed200,
+windSpeed201,
+windSpeed202,
+windSpeed203,
+windSpeed204,
+windSpeed205,
+windSpeed206,
+windSpeed207,
+windSpeed208,
+windSpeed209,
+windSpeed210,
+windSpeed211,
+windSpeed212,
+windSpeed213,
+windSpeed214,
+windSpeed215,
+windSpeed216,
+windSpeed217,
+windSpeed218,
+windSpeed219,
+windSpeed220,
+windSpeed221,
+windSpeed222,
+windSpeed223,
+windSpeed224,
+windSpeed225,
+windSpeed226,
+windSpeed227,
+windSpeed228,
+windSpeed229,
+windSpeed230,
+windSpeed231,
+windSpeed232,
+windSpeed233,
+windSpeed234,
+windSpeed235,
+windSpeed236,
+windSpeed237,
+windSpeed238,
+windSpeed239,
+windSpeed240,
+windSpeed241,
+windSpeed242,
+windSpeed243,
+windSpeed244,
+windSpeed245,
+windSpeed246,
+windSpeed247,
+windSpeed248,
+windSpeed249,
+windSpeed250,
+windSpeed251,
+windSpeed252,
+windSpeed253,
+windSpeed254,
+windSpeed255
 };
 
 #endif

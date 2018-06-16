@@ -8,14 +8,14 @@
 #include "barometer.h"
 #include "mbarlookup.h"
 
-float getPressure()
+char * getPressure()
 {
-	float		pressure;
+	char *		pressure;
 	uint16_t	avgPressureADC;
 	
 	avgPressureADC = getADCAverage(ADC_CHANNEL2);
 	
-	pressure = pgm_read_float(&(mbarLookup[avgPressureADC]));
+	pressure = pgm_read_ptr(&(mbarLookup[avgPressureADC]));
 	
 	return pressure;
 }
