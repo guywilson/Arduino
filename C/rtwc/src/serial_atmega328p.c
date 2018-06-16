@@ -16,8 +16,6 @@
 uint8_t			txBuffer[64];
 uint8_t			txLength = 0;
 
-RXTX_CMD 		rxtxCmd;
-
 void setupSerial()
 {
 	UBRR0H = UBRRH_VALUE;
@@ -95,73 +93,6 @@ void txstr(char * pszData, uint8_t dataLength)
 	UDR0 = getNextTxByte(1);
 	
 	enableTxInterrupt();
-}
-
-/*
-** Rx Complete Interrupt Handler
-*/
-ISR(USART_RX_vect, ISR_BLOCK)
-{
-	static uint8_t		state = STATE_START;
-	static uint8_t		idData[2];
-	static uint8_t		idIndex = 0;
-	static uint8_t		dataIndex = 0;
-	
-	uint8_t	b = UDR0;
-	
-	switch (state) {
-		case STATE_START:
-			if (b == MSG_START) {
-				state = STATE_MESSAGEID;
-				idIndex = 0;
-			}
-			break;
-		
-		case STATE_MESSAGEID:
-			idData[idIndex++] = b;
-			
-			if (idIndex == 2) {
-				memcpy(&rxtxCmd.messageID, &idData[0], 2);
-				state = STATE_COMMAND;
-			}
-			break;
-		
-		case STATE_COMMAND:
-			rxtxCmd.cmd_resp = b;
-			state = STATE_DATALENGTH;
-			break;
-
-		case STATE_DATALENGTH:
-			rxtxCmd.dataLength = b;
-			
-			if (rxtxCmd.dataLength > 0) {
-				state = STATE_DATA;
-				dataIndex = 0;
-			}
-			else {
-				state = STATE_FINISH;
-			}
-			break;
-			
-		case STATE_DATA:
-			rxtxCmd.data[dataIndex++] = b;
-			
-			if (dataIndex == rxtxCmd.dataLength) {
-				state = STATE_FINISH;
-			}
-			break;
-		
-		case STATE_FINISH:
-			if (b == MSG_FINISH) {
-				state = STATE_START;
-			}
-			else {
-				rxtxCmd.errorState = RX_ERROR_DATA_OVERRUN;
-			}
-			
-			scheduleTask(TASK_RXCMD, 1, &rxtxCmd);
-			break;
-	}
 }
 
 /*

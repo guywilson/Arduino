@@ -11,7 +11,7 @@
 ** 1 decimal place to the string.
 **
 ******************************************************************************/
-int doubleToString(uint8_t * dest, double value)
+int doubleToString(char * dest, double value)
 {
 	int				i;
 	int				strLen;
@@ -80,7 +80,7 @@ int doubleToString(uint8_t * dest, double value)
 /*
 ** Supports positive 16-bit integers up to 65535
 */
-int uint16ToString(uint8_t * dest, uint16_t value)
+int uint16ToString(char * dest, uint16_t value)
 {
 	int				i;
 	int				strLen;
@@ -119,7 +119,7 @@ int uint16ToString(uint8_t * dest, uint16_t value)
 	return strLen;
 }
 
-void uint16ToBinaryString(uint8_t * dest, uint16_t value)
+void uint16ToBinaryString(char * dest, uint16_t value)
 {
 	int			i = 15;
 	
@@ -135,7 +135,7 @@ void uint16ToBinaryString(uint8_t * dest, uint16_t value)
 /*
 ** Supports positive 32-bit integers up to 4 294 967 295
 */
-int uint32ToString(uint8_t * dest, uint32_t value)
+int uint32ToString(char * dest, uint32_t value)
 {
 	int				i;
 	int				strLen;
@@ -189,7 +189,7 @@ int uint32ToString(uint8_t * dest, uint32_t value)
 	return strLen;
 }
 
-void uint32ToBinaryString(uint8_t * dest, uint32_t value)
+void uint32ToBinaryString(char * dest, uint32_t value)
 {
 	int			i = 31;
 	

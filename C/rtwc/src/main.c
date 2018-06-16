@@ -5,17 +5,15 @@
 #include "scheduler.h"
 #include "taskdef.h"
 #include "heartbeat.h"
-#include "serialcmd.h"
 #include "adctask.h"
 #include "anemometer.h"
 #include "rainguage.h"
-#include "pwmtask.h"
+#include "txtask.h"
 
 #include "led_utils.h"
 #include "rtc_atmega328p.h"
 #include "adc_atmega328p.h"
 #include "int_atmega328p.h"
-#include "pwm_atmega328p.h"
 #include "readcounter.h"
 #include "serial_atmega328p.h"
 #include "error.h"
@@ -28,11 +26,10 @@ void setup(void)
 	initScheduler();
 	
 	registerTask(TASK_HEARTBEAT, &HeartbeatTask);
-	registerTask(TASK_RXCMD, &RxCmdTask);
 	registerTask(TASK_ADC, &ADCTask);
 	registerTask(TASK_ANEMOMETER, &anemometerTask);
 	registerTask(TASK_RAINGUAGE, &rainGuageTask);
-	registerTask(TASK_PWM, &PWMTask);
+	registerTask(TASK_TX, &TxTask);
 
 	setupLEDPin();
 	setupRTC();
@@ -44,7 +41,6 @@ void setup(void)
 	//enable interrupts
     sei();
 	
-	setupPWM();
 	triggerADC();
 }
 
@@ -55,7 +51,7 @@ int main(void)
 	scheduleTask(TASK_HEARTBEAT, 2950, NULL);
 	scheduleTask(TASK_ANEMOMETER, 1000, NULL);
 	scheduleTask(TASK_RAINGUAGE, 3600000, NULL); // Schedule in 1 hour...
-	scheduleTask(TASK_PWM, 50, NULL);
+	scheduleTask(TASK_TX, 1000, NULL);
 
 	/*
 	** Start the scheduler...

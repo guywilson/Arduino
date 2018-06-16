@@ -6,26 +6,27 @@
 #define HUMIDITY_LOOKUP_BUFFER_SIZE		642
 
 /*
-** From ADC inputs linked to a Texas Instruments LM35CAZ temperature sensor
-** with a range of -40C to 110C. The +ve and -ve ranges from the sensor go
-** to seperate analogue inputs. The sensor output before amplification is
-** -400mV to +1150mV
+** Minimum sensor output corresponding to 0% RH is 800mv. The minimum
+** ADC value at 800mv is 163, hence we subtract the offset defined here
+** from the value before using as the index into the array below...
 */
-
 #define ADC_HUMIDITY_OFFSET				163
 
 /******************************************************************************
 **
-** Calculate the temperature in degrees C for positive temperatures from 0 to 
-** 60C, for ADC values between 0 - 1023. The highest temperate ever recorded
-** on earth is 56.7C in Death Valley, California.
+** From an ADC input linked to a Honeywell HIH-4000 humidity sensor
+** with a range of 0 - 100% relative humidity.
+**
+** Define the relative humidity (RH) for ADC values between 163 - 1675
+** correspoding to sensor voltages of 800mV to 3.9V which are the lower and
+** upper ranges from the sensor for 0% RH to 100% RH.
 **
 ** Vo = Vs(0.0062 * RH + 0.16)
 **
 ** RH = ((ADC / 1023) - 0.16) / 0.0062
 **
 ** This is an expensive operation on a microcontroller, hence we calcuate this 
-** at compile time and store in flash ROM.
+** upfront and store in flash ROM.
 **
 ** This array of const values uses the PROGMEM modifier, a macro that forces
 ** the compiler to keep this data within the flash ROM and not take up valuable

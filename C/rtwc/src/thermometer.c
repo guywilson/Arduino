@@ -18,14 +18,9 @@ float getTemperature()
 	avgPositiveTempADC = getADCAverage(ADC_CHANNEL0);
 	avgNegativeTempADC = getADCAverage(ADC_CHANNEL1);
 	
-	t = avgPositiveTempADC - avgNegativeTempADC;
+	t = (avgPositiveTempADC - avgNegativeTempADC) + TEMP_INDEX_OFFSET;
 	
-	if (t < 0) {
-		temperature = pgm_read_float(&(negTempLookup[t]));
-	}
-	else {
-		temperature = pgm_read_float(&(posTempLookup[t]));
-	}
+	temperature = pgm_read_float(&(tempLookup[t]));
 	
 	return temperature;
 }

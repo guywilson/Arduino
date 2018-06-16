@@ -7,5 +7,6 @@
 #define TASK_ANEMOMETER			0x0800
 #define TASK_RAINGUAGE			0x0A00
 #define TASK_PWM				0xFF00
+#define TASK_TX					0x0B00
 
 #endif
