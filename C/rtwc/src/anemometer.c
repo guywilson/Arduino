@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include <avr/pgmspace.h>
 
 #include "scheduler.h"
@@ -8,7 +9,6 @@
 #include "anemometer.h"
 #include "readcounter.h"
 #include "taskdef.h"
-#include "utils.h"
 #include "serial_atmega328p.h"
 
 uint16_t	rpsBuffer[WIND_SPEED_AVG_COUNT];
@@ -91,9 +91,9 @@ uint16_t getAvgRPS(void)
 	return avgRPS;
 }
 
-char * getAvgWindSpeed(void)
+int getAvgWindSpeed(char * pszDest)
 {
-	char *			avgSpeed;
+	PGM_P			avgSpeed;
 	uint16_t		avgRPS;
 	
 	avgRPS = getAvgRPS();
@@ -102,7 +102,8 @@ char * getAvgWindSpeed(void)
 		avgRPS = KPH_LOOKUP_BUFFER_SIZE - 1;
 	}
 	
-	avgSpeed = pgm_read_ptr(&(kphLookup[avgRPS]));
+	memcpy_P(&avgSpeed, &kphLookup[avgRPS], sizeof(PGM_P));
+	strcpy_P(pszDest, avgSpeed);
 	
-	return avgSpeed;
+	return strlen(pszDest);
 }

@@ -15,5 +15,8 @@ typedef ADCRESULT *		PADCRESULT;
 
 void		ADCTask(PTASKPARM p);
 uint16_t	getADCAverage(uint8_t channel);
+int 		getPressure(char * pszDest);
+int 		getHumidity(char * pszDest);
+int 		getTemperature(char * pszDest);
 
 #endif

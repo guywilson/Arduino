@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include <avr/pgmspace.h>
 
 #include "scheduler.h"
@@ -8,51 +9,30 @@
 #include "rainfall.h"
 #include "taskdef.h"
 
-uint16_t		avgTPH = 0;
+uint16_t		TPH = 0;
 
 void rainGuageTask(PTASKPARM p)
 {
-	static uint16_t		index = 0;
-	static uint16_t		avg = 0;
-	uint16_t			tipsPerHour;
-	
 	/*
 	** Get number of interrupts (tips) since the last
 	** envocation of the task (runs once every hour), from this 
-	** we can calculate the rainfall in mm/hour. This value is 
-	** accumulated to calculate the average every 24 hours...
+	** we can calculate the rainfall in mm/hour...
 	*/
-	tipsPerHour = getExternalInterruptCount(RAINGUAGE_EXTINT_PIN);
-	
-	avg += tipsPerHour;
-	
-	index++;
-	
-	if (index == RAINGUAGE_AVG_COUNT) {
-		/*
-		** Divide by 24...
-		*/
-		avgTPH = (avg / RAINGUAGE_AVG_COUNT);
-		
-		/*
-		** Reset values...
-		*/
-		avg		= 0;
-		index	= 0;
-	}
+	TPH = getExternalInterruptCount(RAINGUAGE_EXTINT_PIN);
 	
 	rescheduleTask(TASK_RAINGUAGE, NULL);
 }
 
-char * getAvgRainfall(void)
+int getRainfall(char * pszDest)
 {
-	char * avgRainfall;
+	PGM_P rainfall;
 
-	if (avgTPH >= RAINFALL_LOOKUP_BUFFER_SIZE) {
-		avgTPH = RAINFALL_LOOKUP_BUFFER_SIZE - 1;
+	if (TPH >= RAINFALL_LOOKUP_BUFFER_SIZE) {
+		TPH = RAINFALL_LOOKUP_BUFFER_SIZE - 1;
 	}
 	
-	avgRainfall = pgm_read_ptr(&(rainfallLookup[avgTPH]));
+	memcpy_P(&rainfall, &rainfallLookup[TPH], sizeof(PGM_P));
+	strcpy_P(pszDest, rainfall);
 	
-	return avgRainfall;
+	return strlen(pszDest);
 }

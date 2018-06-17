@@ -10,6 +10,6 @@
 
 void		anemometerTask(PTASKPARM p);
 uint16_t	getAvgRPS(void);
-char * 		getAvgWindSpeed(void);
+int 		getAvgWindSpeed(char * pszDest);
 
 #endif

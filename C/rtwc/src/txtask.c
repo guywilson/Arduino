@@ -5,80 +5,57 @@
 #include "scheduler.h"
 #include "serial_atmega328p.h"
 #include "taskdef.h"
-#include "thermometer.h"
-#include "barometer.h"
-#include "hygrometer.h"
+#include "adctask.h"
 #include "anemometer.h"
 #include "rainguage.h"
 #include "txtask.h"
-#include "utils.h"
+
 
 void TxTask(PTASKPARM p)
 {
 	char		szBuffer[64];
-	char		szTemperature[8];
-	char		szPressure[8];
-	char		szHumidity[8];
-	char		szWindSpeed[8];
-	char		szRainfall[8];
-	int			len;
-	int			txStrLen = 0;
+	uint8_t		len;
 	int			i = 0;
-
-	strcpy(szTemperature, getTemperature());
-	strcpy(szPressure, getPressure());
-	strcpy(szHumidity, getHumidity());
-	strcpy(szWindSpeed, getAvgWindSpeed());
-	strcpy(szRainfall, getAvgRainfall());
 
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 't';
 	szBuffer[i++] = ':';
-	strcpy(&szBuffer[i], szTemperature);
-	len = strlen(szTemperature);
+	len = getTemperature(&szBuffer[i]);
 	szBuffer[i + len] = '>';
 	i += len + 1;
-	txStrLen += len + 4;
 	
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 'p';
 	szBuffer[i++] = ':';
-	strcpy(&szBuffer[i], szPressure);
-	len = strlen(szPressure);
+	len = getPressure(&szBuffer[i]);
 	szBuffer[i + len] = '>';
 	i += len + 1;
-	txStrLen += len + 4;
 	
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 'h';
 	szBuffer[i++] = ':';
-	strcpy(&szBuffer[i], szHumidity);
-	len = strlen(szHumidity);
+	len = getHumidity(&szBuffer[i]);
 	szBuffer[i + len] = '>';
 	i += len + 1;
-	txStrLen += len + 4;
 	
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 'w';
 	szBuffer[i++] = ':';
-	strcpy(&szBuffer[i], szWindSpeed);
-	len = strlen(szWindSpeed);
+	len = getAvgWindSpeed(&szBuffer[i]);
 	szBuffer[i + len] = '>';
 	i += len + 1;
-	txStrLen += len + 4;
 	
 	szBuffer[i++] = '<';
 	szBuffer[i++] = 'r';
 	szBuffer[i++] = ':';
-	strcpy(&szBuffer[i], szRainfall);
-	len = strlen(szRainfall);
+	len = getRainfall(&szBuffer[i]);
 	szBuffer[i + len] = '>';
 	i += len + 1;
-	txStrLen += len + 4;
 	
+	szBuffer[i++] = '\n';
 	szBuffer[i] = 0;
 
-	txstr(szBuffer, txStrLen);
+	txstr(szBuffer, i);
 	
 	rescheduleTask(TASK_TX, NULL);
 }

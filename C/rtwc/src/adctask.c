@@ -1,10 +1,15 @@
 #include <stddef.h>
+#include <string.h>
 #include <avr/io.h>
+#include <avr/pgmspace.h>
 
 #include "scheduler.h"
 #include "adctask.h"
 #include "taskdef.h"
 #include "adc_atmega328p.h"
+#include "mbarlookup.h"
+#include "humiditylookup.h"
+#include "templookup.h"
 
 uint16_t		adcResults[NUM_ADC_CHANNELS][ADC_RESULT_ARRAY_SIZE];
 
@@ -56,4 +61,48 @@ uint16_t getADCAverage(uint8_t channel)
 	average = average >> ADC_RESULT_AVG_SHIFT;
 	
 	return average;
+}
+
+int getPressure(char * pszDest)
+{
+	PGM_P		pressure;
+	uint16_t	avgPressureADC;
+	
+	avgPressureADC = getADCAverage(ADC_CHANNEL2);
+	
+	memcpy_P(&pressure, &mbarLookup[avgPressureADC], sizeof(PGM_P));
+	strcpy_P(pszDest, pressure);
+	
+	return strlen(pszDest);
+}
+
+int getHumidity(char * pszDest)
+{
+	PGM_P		humidity;
+	uint16_t	avgHumidityADC;
+	
+	avgHumidityADC = getADCAverage(ADC_CHANNEL3) - ADC_HUMIDITY_OFFSET;
+	
+	memcpy_P(&humidity, &humidityLookup[avgHumidityADC], sizeof(PGM_P));
+	strcpy_P(pszDest, humidity);
+	
+	return strlen(pszDest);
+}
+
+int getTemperature(char * pszDest)
+{
+	PGM_P			temperature;
+	int16_t			avgPositiveTempADC;
+	int16_t			avgNegativeTempADC;
+	int16_t			t;
+	
+	avgPositiveTempADC = getADCAverage(ADC_CHANNEL0);
+	avgNegativeTempADC = getADCAverage(ADC_CHANNEL1);
+	
+	t = (avgPositiveTempADC - avgNegativeTempADC) + TEMP_INDEX_OFFSET;
+	
+	memcpy_P(&temperature, &tempLookup[t], sizeof(PGM_P));
+	strcpy_P(pszDest, temperature);
+	
+	return strlen(pszDest);
 }

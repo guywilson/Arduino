@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 
 #include "scheduler.h"
 #include "taskdef.h"
