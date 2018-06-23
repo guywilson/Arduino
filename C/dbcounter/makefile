@@ -25,7 +25,7 @@ BUILD=build
 SRC=src
 
 # Port we use to upload the tearget to the device
-UPLOADPORT=/dev/cu.usbmodem1411
+UPLOADPORT=/dev/cu.wchusbserial1410
 
 # C compiler
 CC=avr-gcc
@@ -64,7 +64,7 @@ SFLAGS=-C --mcu=$(DEVICE)
 SCHEDOBJ=$(BUILD)/scheduler.o
 
 # Object files
-OBJFILES=$(SCHEDOBJ) $(BUILD)/led_utils.o $(BUILD)/heartbeat.o $(BUILD)/dbtask.o $(BUILD)/rtc_atmega328p.o $(BUILD)/int_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/main.o
+OBJFILES=$(SCHEDOBJ) $(BUILD)/led_utils.o $(BUILD)/heartbeat.o $(BUILD)/dbtask.o $(BUILD)/rtc_atmega328p.o $(BUILD)/spi_atmega328p.o $(BUILD)/pwm_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/main.o
 
 # Target
 all: $(TARGET)
@@ -88,19 +88,22 @@ $(BUILD)/led_utils.o: $(SRC)/led_utils.c $(SRC)/led_utils.h
 $(BUILD)/heartbeat.o: $(SRC)/heartbeat.c $(SRC)/heartbeat.h $(SRC)/led_utils.h $(SRC)/scheduler.h $(SRC)/taskdef.h
 	$(CC) $(CFLAGS) -o $(BUILD)/heartbeat.o $(SRC)/heartbeat.c
 
-$(BUILD)/dbtask.o: $(SRC)/dbtask.c $(SRC)/dbtask.h $(SRC)/scheduler.h $(SRC)/taskdef.h
+$(BUILD)/dbtask.o: $(SRC)/dbtask.c $(SRC)/dbtask.h $(SRC)/spi_atmega328p.h $(SRC)/scheduler.h $(SRC)/taskdef.h
 	$(CC) $(CFLAGS) -o $(BUILD)/dbtask.o $(SRC)/dbtask.c
 
 $(BUILD)/rtc_atmega328p.o: $(SRC)/rtc_atmega328p.c $(SRC)/rtc_atmega328p.h
 	$(CC) $(CFLAGS) -o $(BUILD)/rtc_atmega328p.o $(SRC)/rtc_atmega328p.c
 
-$(BUILD)/int_atmega328p.o: $(SRC)/int_atmega328p.c $(SRC)/int_atmega328p.h
-	$(CC) $(CFLAGS) -o $(BUILD)/int_atmega328p.o $(SRC)/int_atmega328p.c
+$(BUILD)/spi_atmega328p.o: $(SRC)/spi_atmega328p.c $(SRC)/spi_atmega328p.h $(SRC)/scheduler.h $(SRC)/taskdef.h
+	$(CC) $(CFLAGS) -o $(BUILD)/spi_atmega328p.o $(SRC)/spi_atmega328p.c
+
+$(BUILD)/pwm_atmega328p.o: $(SRC)/pwm_atmega328p.c $(SRC)/pwm_atmega328p.h
+	$(CC) $(CFLAGS) -o $(BUILD)/pwm_atmega328p.o $(SRC)/pwm_atmega328p.c
 
 $(BUILD)/error_atmega328p.o: $(SRC)/error_atmega328p.c $(SRC)/error.h $(SRC)/led_utils.h
 	$(CC) $(CFLAGS) -o $(BUILD)/error_atmega328p.o $(SRC)/error_atmega328p.c
 
-$(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/heartbeat.h $(SRC)/dbtask.h $(SRC)/taskdef.h $(SRC)/led_utils.h $(SRC)/rtc_atmega328p.h $(SRC)/int_atmega328p.h $(SRC)/error.h
+$(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/heartbeat.h $(SRC)/dbtask.h $(SRC)/taskdef.h $(SRC)/led_utils.h $(SRC)/rtc_atmega328p.h $(SRC)/spi_atmega328p.h $(SRC)/error.h
 	$(CC) $(CFLAGS) -o $(BUILD)/main.o $(SRC)/main.c
 
 ###############################################################################

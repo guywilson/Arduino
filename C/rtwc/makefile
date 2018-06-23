@@ -61,7 +61,7 @@ SFLAGS=-C --mcu=$(DEVICE)
 SCHEDOBJ=$(BUILD)/scheduler.o
 
 # Object files
-OBJFILES=$(SCHEDOBJ) $(BUILD)/led_utils.o $(BUILD)/heartbeat.o $(BUILD)/adctask.o $(BUILD)/anemometer.o $(BUILD)/rainguage.o $(BUILD)/readcounter.o $(BUILD)/rtc_atmega328p.o $(BUILD)/serial_atmega328p.o $(BUILD)/adc_atmega328p.o $(BUILD)/int_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/txtask.o $(BUILD)/main.o
+OBJFILES=$(SCHEDOBJ) $(BUILD)/led_utils.o $(BUILD)/heartbeat.o $(BUILD)/adctask.o $(BUILD)/anemometer.o $(BUILD)/rainguage.o $(BUILD)/readcounter.o $(BUILD)/rtc_atmega328p.o $(BUILD)/serial_atmega328p.o $(BUILD)/adc_atmega328p.o $(BUILD)/spi_atmega328p.o $(BUILD)/error_atmega328p.o $(BUILD)/txtask.o $(BUILD)/main.o
 
 # Target
 all: $(TARGET)
@@ -88,10 +88,10 @@ $(BUILD)/heartbeat.o: $(SRC)/heartbeat.c $(SRC)/heartbeat.h $(SRC)/led_utils.h $
 $(BUILD)/adctask.o: $(SRC)/adctask.c $(SRC)/adctask.h $(SRC)/scheduler.h $(SRC)/taskdef.h $(SRC)/adc_atmega328p.h $(SRC)/templookup.h $(SRC)/mbarlookup.h $(SRC)/humiditylookup.h
 	$(CC) $(CFLAGS) -o $(BUILD)/adctask.o $(SRC)/adctask.c
 
-$(BUILD)/anemometer.o: $(SRC)/anemometer.c $(SRC)/anemometer.h $(SRC)/int_atmega328p.h $(SRC)/kphlookup.h $(SRC)/taskdef.h $(SRC)/scheduler.h
+$(BUILD)/anemometer.o: $(SRC)/anemometer.c $(SRC)/anemometer.h $(SRC)/spi_atmega328p.h $(SRC)/kphlookup.h $(SRC)/taskdef.h $(SRC)/scheduler.h
 	$(CC) $(CFLAGS) -o $(BUILD)/anemometer.o $(SRC)/anemometer.c
 
-$(BUILD)/rainguage.o: $(SRC)/rainguage.c $(SRC)/rainguage.h $(SRC)/rainfall.h $(SRC)/int_atmega328p.h $(SRC)/taskdef.h $(SRC)/scheduler.h
+$(BUILD)/rainguage.o: $(SRC)/rainguage.c $(SRC)/rainguage.h $(SRC)/rainfall.h $(SRC)/spi_atmega328p.h $(SRC)/taskdef.h $(SRC)/scheduler.h
 	$(CC) $(CFLAGS) -o $(BUILD)/rainguage.o $(SRC)/rainguage.c
 
 $(BUILD)/readcounter.o: $(SRC)/readcounter.c $(SRC)/readcounter.h
@@ -103,8 +103,8 @@ $(BUILD)/rtc_atmega328p.o: $(SRC)/rtc_atmega328p.c $(SRC)/rtc_atmega328p.h
 $(BUILD)/adc_atmega328p.o: $(SRC)/adc_atmega328p.c $(SRC)/adc_atmega328p.h $(SRC)/scheduler.h $(SRC)/adctask.h $(SRC)/taskdef.h
 	$(CC) $(CFLAGS) -o $(BUILD)/adc_atmega328p.o $(SRC)/adc_atmega328p.c
 
-$(BUILD)/int_atmega328p.o: $(SRC)/int_atmega328p.c $(SRC)/int_atmega328p.h
-	$(CC) $(CFLAGS) -o $(BUILD)/int_atmega328p.o $(SRC)/int_atmega328p.c
+$(BUILD)/spi_atmega328p.o: $(SRC)/spi_atmega328p.c $(SRC)/spi_atmega328p.h $(SRC)/scheduler.h $(SRC)/taskdef.h
+	$(CC) $(CFLAGS) -o $(BUILD)/spi_atmega328p.o $(SRC)/spi_atmega328p.c
 
 $(BUILD)/serial_atmega328p.o: $(SRC)/serial_atmega328p.c $(SRC)/serial_atmega328p.h $(SRC)/rxtxmsgdef.h $(SRC)/scheduler.h $(SRC)/taskdef.h
 	$(CC) $(CFLAGS) -o $(BUILD)/serial_atmega328p.o $(SRC)/serial_atmega328p.c
@@ -115,7 +115,7 @@ $(BUILD)/error_atmega328p.o: $(SRC)/error_atmega328p.c $(SRC)/error.h $(SRC)/led
 $(BUILD)/txtask.o: $(SRC)/txtask.c $(SRC)/txtask.h $(SRC)/taskdef.h $(SRC)/serial_atmega328p.h $(SRC)/adctask.h $(SRC)/anemometer.h $(SRC)/rainguage.h
 	$(CC) $(CFLAGS) -o $(BUILD)/txtask.o $(SRC)/txtask.c
 
-$(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/heartbeat.h $(SRC)/adctask.h $(SRC)/anemometer.h $(SRC)/rainguage.h $(SRC)/readcounter.h $(SRC)/taskdef.h $(SRC)/led_utils.h $(SRC)/rtc_atmega328p.h $(SRC)/adc_atmega328p.h $(SRC)/int_atmega328p.h $(SRC)/error.h
+$(BUILD)/main.o: $(SRC)/main.c $(SRC)/scheduler.h $(SRC)/heartbeat.h $(SRC)/adctask.h $(SRC)/anemometer.h $(SRC)/rainguage.h $(SRC)/readcounter.h $(SRC)/taskdef.h $(SRC)/led_utils.h $(SRC)/rtc_atmega328p.h $(SRC)/adc_atmega328p.h $(SRC)/spi_atmega328p.h $(SRC)/error.h
 	$(CC) $(CFLAGS) -o $(BUILD)/main.o $(SRC)/main.c
 
 ###############################################################################

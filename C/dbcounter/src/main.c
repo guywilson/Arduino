@@ -9,7 +9,8 @@
 
 #include "led_utils.h"
 #include "rtc_atmega328p.h"
-#include "int_atmega328p.h"
+#include "spi_atmega328p.h"
+#include "pwm_atmega328p.h"
 #include "error.h"
 
 void setup(void)
@@ -21,11 +22,13 @@ void setup(void)
 	
 	registerTask(TASK_HEARTBEAT, &HeartbeatTask);
 	registerTask(TASK_DEBOUNCE, &DebounceTask);
+	registerTask(TASK_SPI, &SpiTask);
 
 	setupLEDPin();
 	setupRTC();
 	setupDebouncePorts();
-	setupExternalInterrupts();
+	setupSPI();
+	setupPWM();
 
 	//enable interrupts
     sei();
@@ -37,6 +40,7 @@ int main(void)
 	
 	scheduleTask(TASK_HEARTBEAT, 29500, NULL);
 	scheduleTask(TASK_DEBOUNCE, 3, NULL);
+	scheduleTask(TASK_SPI, 10, NULL);
 
 	/*
 	** Start the scheduler...

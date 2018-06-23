@@ -4,7 +4,7 @@
 #include <avr/pgmspace.h>
 
 #include "scheduler.h"
-#include "int_atmega328p.h"
+#include "spi_atmega328p.h"
 #include "rainguage.h"
 #include "rainfall.h"
 #include "taskdef.h"
@@ -18,7 +18,7 @@ void rainGuageTask(PTASKPARM p)
 	** envocation of the task (runs once every hour), from this 
 	** we can calculate the rainfall in mm/hour...
 	*/
-	TPH = getExternalInterruptCount(RAINGUAGE_EXTINT_PIN);
+	TPH = getCounterValue(RAINGUAGE_CHANNEL);
 	
 	rescheduleTask(TASK_RAINGUAGE, NULL);
 }
