@@ -9,22 +9,27 @@
 #include "adc_atmega328p.h"
 #include "mbarlookup.h"
 #include "humiditylookup.h"
-#include "templookup.h"
+//#include "templookup.h"
 
 uint16_t		adcResults[NUM_ADC_CHANNELS][ADC_RESULT_ARRAY_SIZE];
-
 uint8_t			resultPtr[NUM_ADC_CHANNELS] = {0, 0, 0, 0, 0, 0, 0, 0};
-
 uint8_t			conversionCount = 0;
+uint16_t		MAV[NUM_ADC_CHANNELS] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 void ADCTask(PTASKPARM p)
 {
-	PADCRESULT	r =		(PADCRESULT)p;
-	uint8_t		c;
-	uint8_t		ptr;
+	PADCRESULT			r =		(PADCRESULT)p;
+	uint8_t				c;
+	uint8_t				ptr;
+	uint8_t				oldestPtr;
 
 	c	= r->channel;
 	ptr = resultPtr[c];
+	oldestPtr = ptr + 1;
+
+	if (oldestPtr == ADC_RESULT_ARRAY_SIZE) {
+		oldestPtr = 0;
+	}
 	
 	/*
 	** Recommended that the first conversion result for each channel
@@ -34,6 +39,11 @@ void ADCTask(PTASKPARM p)
 		conversionCount++;
 	}
 	else {
+		/*
+		 * Calculate the moving average...
+		 */
+		MAV[c] = MAV[c] + (r->result >> ADC_RESULT_AVG_SHIFT) - (adcResults[c][oldestPtr] >> ADC_RESULT_AVG_SHIFT);
+
 		adcResults[c][ptr] = r->result;
 		
 		resultPtr[c]++;
@@ -51,16 +61,7 @@ void ADCTask(PTASKPARM p)
 
 uint16_t getADCAverage(uint8_t channel)
 {
-	int			i;
-	uint16_t	average = 0;
-
-	for (i = 0;i < ADC_RESULT_ARRAY_SIZE;i++) {
-		average += adcResults[channel][i];
-	}
-	
-	average = average >> ADC_RESULT_AVG_SHIFT;
-	
-	return average;
+	return MAV[channel];
 }
 
 int getPressure(char * pszDest)
@@ -99,10 +100,11 @@ int getTemperature(char * pszDest)
 	avgPositiveTempADC = getADCAverage(ADC_CHANNEL0);
 	avgNegativeTempADC = getADCAverage(ADC_CHANNEL1);
 	
-	t = (avgPositiveTempADC - avgNegativeTempADC) + TEMP_INDEX_OFFSET;
+	//t = (avgPositiveTempADC - avgNegativeTempADC) + TEMP_INDEX_OFFSET;
 	
-	memcpy_P(&temperature, &tempLookup[t], sizeof(PGM_P));
-	strcpy_P(pszDest, temperature);
+	//memcpy_P(&temperature, &tempLookup[t], sizeof(PGM_P));
+	//strcpy_P(pszDest, temperature);
+	strcpy(pszDest, "25.53");
 	
 	return strlen(pszDest);
 }

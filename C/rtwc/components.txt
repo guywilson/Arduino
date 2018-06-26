@@ -1,0 +1,6 @@
+87 - 108 mbar range
+
+Voltage Divider
+---------------
+2K + 17.8K / 40.2K
+

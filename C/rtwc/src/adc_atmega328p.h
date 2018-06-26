@@ -23,7 +23,7 @@
 #define ADC_PRESCALER_DIV64			0x06
 #define ADC_PRESCALER_DIV128		0x07
 
-#define ADC_USED_CHANNELS			3
+#define ADC_USED_CHANNELS			4
 
 void setupADC(void);
 void triggerADC(void);

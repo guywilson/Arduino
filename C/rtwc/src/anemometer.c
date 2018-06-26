@@ -7,7 +7,6 @@
 #include "spi_atmega328p.h"
 #include "kphlookup.h"
 #include "anemometer.h"
-#include "readcounter.h"
 #include "taskdef.h"
 #include "serial_atmega328p.h"
 
