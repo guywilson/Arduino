@@ -11,34 +11,46 @@
 #include "humiditylookup.h"
 //#include "templookup.h"
 
+uint8_t			conversionCount = 0;
+
+#ifdef MOVING_AVG_ENABLE
 uint16_t		adcResults[NUM_ADC_CHANNELS][ADC_RESULT_ARRAY_SIZE];
 uint8_t			resultPtr[NUM_ADC_CHANNELS] = {0, 0, 0, 0, 0, 0, 0, 0};
-uint8_t			conversionCount = 0;
 uint16_t		MAV[NUM_ADC_CHANNELS] = {0, 0, 0, 0, 0, 0, 0, 0};
+#else
+uint16_t		adcResults[NUM_ADC_CHANNELS];
+#endif
 
 void ADCTask(PTASKPARM p)
 {
 	PADCRESULT			r =		(PADCRESULT)p;
 	uint8_t				c;
+
+#ifdef MOVING_AVG_ENABLE
 	uint8_t				ptr;
 	uint8_t				oldestPtr;
+#endif
 
 	c	= r->channel;
+
+#ifdef MOVING_AVG_ENABLE
 	ptr = resultPtr[c];
 	oldestPtr = ptr + 1;
 
 	if (oldestPtr == ADC_RESULT_ARRAY_SIZE) {
 		oldestPtr = 0;
 	}
+#endif
 	
 	/*
 	** Recommended that the first conversion result for each channel
-	** is ignored as it is likely to be innacurate...
+	** is ignored as it is likely to be inaccurate...
 	*/
 	if (conversionCount < ADC_USED_CHANNELS) {
 		conversionCount++;
 	}
 	else {
+#ifdef MOVING_AVG_ENABLE
 		/*
 		 * Calculate the moving average...
 		 */
@@ -51,8 +63,11 @@ void ADCTask(PTASKPARM p)
 		if (resultPtr[c] == ADC_RESULT_ARRAY_SIZE) {
 			resultPtr[c] = 0;
 		}
+#else
+		adcResults[c] = r->result;
+#endif
 	}
-	
+
 	/*
 	** Trigger next conversion...
 	*/
@@ -61,7 +76,11 @@ void ADCTask(PTASKPARM p)
 
 uint16_t getADCAverage(uint8_t channel)
 {
+#ifdef MOVING_AVG_ENABLE
 	return MAV[channel];
+#else
+	return adcResults[channel];
+#endif
 }
 
 int getPressure(char * pszDest)
