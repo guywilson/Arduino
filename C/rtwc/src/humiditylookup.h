@@ -3,7 +3,7 @@
 #ifndef _INCL_HUMIDITYLOOKUP
 #define _INCL_HUMIDITYLOOKUP
 
-#define HUMIDITY_LOOKUP_BUFFER_SIZE		642
+#define HUMIDITY_LOOKUP_BUFFER_SIZE		636
 
 /*
 ** Minimum sensor output corresponding to 0% RH is 800mv. The minimum
@@ -18,14 +18,14 @@
 ** with a range of 0 - 100% relative humidity.
 **
 ** Define the relative humidity (RH) for ADC values between 163 - 804
-** correspoding to sensor voltages of 800mV to 3.9V which are the lower and
+** corresponding to sensor voltages of 800mV to 3.9V which are the lower and
 ** upper ranges from the sensor for 0% RH to 100% RH.
 **
 ** Vo = Vs(0.0062 * RH + 0.16)
 **
 ** RH = ((ADC / 1023) - 0.16) / 0.0062
 **
-** This is an expensive operation on a microcontroller", hence we calcuate this 
+** This is an expensive operation on a microcontroller", hence we calculate this
 ** upfront and store in flash ROM.
 **
 ** This array of const values uses the PROGMEM modifier", a macro that forces
@@ -669,13 +669,7 @@ const char humidity631[] PROGMEM = "99.38";
 const char humidity632[] PROGMEM = "99.54";
 const char humidity633[] PROGMEM = "99.69";
 const char humidity634[] PROGMEM = "99.85";
-const char humidity635[] PROGMEM = "100.01";
-const char humidity636[] PROGMEM = "100.17";
-const char humidity637[] PROGMEM = "100.32";
-const char humidity638[] PROGMEM = "100.48";
-const char humidity639[] PROGMEM = "100.64";
-const char humidity640[] PROGMEM = "100.80";
-const char humidity641[] PROGMEM = "100.96";
+const char humidity635[] PROGMEM = "100.00";
 
 static PGM_P const humidityLookup[HUMIDITY_LOOKUP_BUFFER_SIZE] PROGMEM = 
 {
@@ -1314,13 +1308,7 @@ humidity631,
 humidity632,
 humidity633,
 humidity634,
-humidity635,
-humidity636,
-humidity637,
-humidity638,
-humidity639,
-humidity640,
-humidity641
+humidity635
 };
 
 #endif

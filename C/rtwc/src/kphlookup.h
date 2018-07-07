@@ -3,7 +3,7 @@
 #ifndef _INCL_KPHLOOKUP
 #define _INCL_KPHLOOKUP
 
-#define KPH_LOOKUP_BUFFER_SIZE			256
+#define KPH_LOOKUP_BUFFER_SIZE			178
 
 /*
 ** The diameter of the anemometer blades in metres...
@@ -212,84 +212,6 @@ const char windSpeed174[] PROGMEM = "196.79";
 const char windSpeed175[] PROGMEM = "197.92";
 const char windSpeed176[] PROGMEM = "199.05";
 const char windSpeed177[] PROGMEM = "200.18";
-const char windSpeed178[] PROGMEM = "201.31";
-const char windSpeed179[] PROGMEM = "202.44";
-const char windSpeed180[] PROGMEM = "203.58";
-const char windSpeed181[] PROGMEM = "204.71";
-const char windSpeed182[] PROGMEM = "205.84";
-const char windSpeed183[] PROGMEM = "206.97";
-const char windSpeed184[] PROGMEM = "208.10";
-const char windSpeed185[] PROGMEM = "209.23";
-const char windSpeed186[] PROGMEM = "210.36";
-const char windSpeed187[] PROGMEM = "211.49";
-const char windSpeed188[] PROGMEM = "212.62";
-const char windSpeed189[] PROGMEM = "213.75";
-const char windSpeed190[] PROGMEM = "214.88";
-const char windSpeed191[] PROGMEM = "216.02";
-const char windSpeed192[] PROGMEM = "217.15";
-const char windSpeed193[] PROGMEM = "218.28";
-const char windSpeed194[] PROGMEM = "219.41";
-const char windSpeed195[] PROGMEM = "220.54";
-const char windSpeed196[] PROGMEM = "221.67";
-const char windSpeed197[] PROGMEM = "222.80";
-const char windSpeed198[] PROGMEM = "223.93";
-const char windSpeed199[] PROGMEM = "225.06";
-const char windSpeed200[] PROGMEM = "226.19";
-const char windSpeed201[] PROGMEM = "227.33";
-const char windSpeed202[] PROGMEM = "228.46";
-const char windSpeed203[] PROGMEM = "229.59";
-const char windSpeed204[] PROGMEM = "230.72";
-const char windSpeed205[] PROGMEM = "231.85";
-const char windSpeed206[] PROGMEM = "232.98";
-const char windSpeed207[] PROGMEM = "234.11";
-const char windSpeed208[] PROGMEM = "235.24";
-const char windSpeed209[] PROGMEM = "236.37";
-const char windSpeed210[] PROGMEM = "237.50";
-const char windSpeed211[] PROGMEM = "238.64";
-const char windSpeed212[] PROGMEM = "239.77";
-const char windSpeed213[] PROGMEM = "240.90";
-const char windSpeed214[] PROGMEM = "242.03";
-const char windSpeed215[] PROGMEM = "243.16";
-const char windSpeed216[] PROGMEM = "244.29";
-const char windSpeed217[] PROGMEM = "245.42";
-const char windSpeed218[] PROGMEM = "246.55";
-const char windSpeed219[] PROGMEM = "247.68";
-const char windSpeed220[] PROGMEM = "248.81";
-const char windSpeed221[] PROGMEM = "249.95";
-const char windSpeed222[] PROGMEM = "251.08";
-const char windSpeed223[] PROGMEM = "252.21";
-const char windSpeed224[] PROGMEM = "253.34";
-const char windSpeed225[] PROGMEM = "254.47";
-const char windSpeed226[] PROGMEM = "255.60";
-const char windSpeed227[] PROGMEM = "256.73";
-const char windSpeed228[] PROGMEM = "257.86";
-const char windSpeed229[] PROGMEM = "258.99";
-const char windSpeed230[] PROGMEM = "260.12";
-const char windSpeed231[] PROGMEM = "261.25";
-const char windSpeed232[] PROGMEM = "262.39";
-const char windSpeed233[] PROGMEM = "263.52";
-const char windSpeed234[] PROGMEM = "264.65";
-const char windSpeed235[] PROGMEM = "265.78";
-const char windSpeed236[] PROGMEM = "266.91";
-const char windSpeed237[] PROGMEM = "268.04";
-const char windSpeed238[] PROGMEM = "269.17";
-const char windSpeed239[] PROGMEM = "270.30";
-const char windSpeed240[] PROGMEM = "271.43";
-const char windSpeed241[] PROGMEM = "272.56";
-const char windSpeed242[] PROGMEM = "273.70";
-const char windSpeed243[] PROGMEM = "274.83";
-const char windSpeed244[] PROGMEM = "275.96";
-const char windSpeed245[] PROGMEM = "277.09";
-const char windSpeed246[] PROGMEM = "278.22";
-const char windSpeed247[] PROGMEM = "279.35";
-const char windSpeed248[] PROGMEM = "280.48";
-const char windSpeed249[] PROGMEM = "281.61";
-const char windSpeed250[] PROGMEM = "282.74";
-const char windSpeed251[] PROGMEM = "283.87";
-const char windSpeed252[] PROGMEM = "285.01";
-const char windSpeed253[] PROGMEM = "286.14";
-const char windSpeed254[] PROGMEM = "287.27";
-const char windSpeed255[] PROGMEM = "288.40";
 
 static PGM_P const kphLookup[KPH_LOOKUP_BUFFER_SIZE] PROGMEM = 
 {
@@ -470,85 +392,7 @@ windSpeed173,
 windSpeed174,
 windSpeed175,
 windSpeed176,
-windSpeed177,
-windSpeed178,
-windSpeed179,
-windSpeed180,
-windSpeed181,
-windSpeed182,
-windSpeed183,
-windSpeed184,
-windSpeed185,
-windSpeed186,
-windSpeed187,
-windSpeed188,
-windSpeed189,
-windSpeed190,
-windSpeed191,
-windSpeed192,
-windSpeed193,
-windSpeed194,
-windSpeed195,
-windSpeed196,
-windSpeed197,
-windSpeed198,
-windSpeed199,
-windSpeed200,
-windSpeed201,
-windSpeed202,
-windSpeed203,
-windSpeed204,
-windSpeed205,
-windSpeed206,
-windSpeed207,
-windSpeed208,
-windSpeed209,
-windSpeed210,
-windSpeed211,
-windSpeed212,
-windSpeed213,
-windSpeed214,
-windSpeed215,
-windSpeed216,
-windSpeed217,
-windSpeed218,
-windSpeed219,
-windSpeed220,
-windSpeed221,
-windSpeed222,
-windSpeed223,
-windSpeed224,
-windSpeed225,
-windSpeed226,
-windSpeed227,
-windSpeed228,
-windSpeed229,
-windSpeed230,
-windSpeed231,
-windSpeed232,
-windSpeed233,
-windSpeed234,
-windSpeed235,
-windSpeed236,
-windSpeed237,
-windSpeed238,
-windSpeed239,
-windSpeed240,
-windSpeed241,
-windSpeed242,
-windSpeed243,
-windSpeed244,
-windSpeed245,
-windSpeed246,
-windSpeed247,
-windSpeed248,
-windSpeed249,
-windSpeed250,
-windSpeed251,
-windSpeed252,
-windSpeed253,
-windSpeed254,
-windSpeed255
+windSpeed177
 };
 
 #endif

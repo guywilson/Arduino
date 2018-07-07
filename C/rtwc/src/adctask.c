@@ -9,7 +9,7 @@
 #include "adc_atmega328p.h"
 #include "mbarlookup.h"
 #include "humiditylookup.h"
-//#include "templookup.h"
+#include "templookup.h"
 
 uint8_t			conversionCount = 0;
 
@@ -119,10 +119,10 @@ int getTemperature(char * pszDest)
 	avgPositiveTempADC = getADCAverage(ADC_CHANNEL0);
 	avgNegativeTempADC = getADCAverage(ADC_CHANNEL1);
 	
-	//t = (avgPositiveTempADC - avgNegativeTempADC) + TEMP_INDEX_OFFSET;
+	t = (avgPositiveTempADC - avgNegativeTempADC) + TEMP_INDEX_OFFSET;
 	
-	//memcpy_P(&temperature, &tempLookup[t], sizeof(PGM_P));
-	//strcpy_P(pszDest, temperature);
+	memcpy_P(&temperature, &tempLookup[t], sizeof(PGM_P));
+	strcpy_P(pszDest, temperature);
 	strcpy(pszDest, "25.53");
 	
 	return strlen(pszDest);
