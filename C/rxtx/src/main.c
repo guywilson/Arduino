@@ -46,32 +46,6 @@ int set_interface_attribs(int fd, int speed)
 	return 0;
 }
 
-int writeSerial(const char * szPortname, char * szData, int dataLen)
-{
-	int					fd;
-    int					wlen;
-
-	fd = open(szPortname, O_RDWR | O_NOCTTY | O_NDELAY);
-    
-	if (fd < 0) {
-        printf("Error opening %s: %s\n", szPortname, strerror(errno));
-        return -1;
-    }
-
-	set_interface_attribs(fd, B115200);
-
-    wlen = write(fd, szData, dataLen);
-	
-    if (wlen != dataLen) {
-        printf("Error from write: %d, %d\n", wlen, errno);
-		return -1;
-    }
-
-	close(fd);
-	
-	return wlen;
-}
-
 int readSerial(const char * szPortname, char * szBuffer)
 {
 	int					i = 0;
@@ -87,7 +61,7 @@ int readSerial(const char * szPortname, char * szBuffer)
         return -1;
     }
 
-	set_interface_attribs(fd, B115200);
+	set_interface_attribs(fd, B57600);
 	
 	tcflush(fd, TCIFLUSH);
 
@@ -101,7 +75,7 @@ int readSerial(const char * szPortname, char * szBuffer)
 			break;
 		}
 		
-		if (szBuffer[i] == '>') {
+		if (szBuffer[i] == '\n') {
 			go = 0;
 		}
 		
@@ -117,72 +91,14 @@ int readSerial(const char * szPortname, char * szBuffer)
 
 int main(int argc, char *argv[])
 {
-	char				writeBuffer[65];
 	char				readBuffer[65];
 	int					go = 1;
-	int					i;
-	int					j;
 	int					bytesRead;
-	int					c = 0;
-	int					response = 0;
-	uint16_t			adcResult = 0;
 
 	while (go) {
-		printf("cmd: ");
-		scanf("%s", writeBuffer);
-		
-		//printf("Writing '%s'\n", writeBuffer);
-		
-		if (strncmp(writeBuffer, "quit", 4) == 0) {
-			go = 0;
-		}
-		else {
-			writeSerial(SERIAL_PORT, writeBuffer, strlen(writeBuffer));
 			bytesRead = readSerial(SERIAL_PORT, readBuffer);
 			
-			for (i = 0;i < bytesRead;i++) {
-				c = readBuffer[i];
-				
-				switch (c) {
-					case '<':
-						break;
-					
-					case '$':
-						break;
-						
-					case 'O':
-					case 'K':
-						response = RESPONSE_ACK;
-						break;
-						
-					case 'C':
-						response = RESPONSE_ADC;
-						break;
-						
-					case '>':
-						if (response == RESPONSE_ADC) {
-							printf(" result = %d\n", adcResult);
-							adcResult = 0;
-						}
-						break;
-						
-					default:
-						if (response == RESPONSE_ADC) {
-							if (i == 3) {
-								printf("ADC Channel %d", (c - 0x30));
-								j = 9;
-							}
-							else {
-								adcResult |= (c - 0x30) << j;
-								j--;
-							}
-						}
-						break;
-				}
-			}
-			
-			printf("rtn : %s\n", readBuffer);
-		}
+			printf("rx : %s\n", readBuffer);
 	}
 
 	return 0;

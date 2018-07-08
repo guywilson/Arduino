@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <string.h>
+#include <stdlib.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 
@@ -10,6 +11,8 @@
 #include "mbarlookup.h"
 #include "humiditylookup.h"
 #include "templookup.h"
+
+//#define MOVING_AVG_ENABLE
 
 uint8_t			conversionCount = 0;
 
@@ -96,16 +99,27 @@ int getPressure(char * pszDest)
 	return strlen(pszDest);
 }
 
+//int getHumidity(char * pszDest)
+//{
+//	uint16_t	avgHumidityADC;
+//
+//	avgHumidityADC = adcResults[ADC_CHANNEL3];
+//
+//	itoa(avgHumidityADC, pszDest, 10);
+//
+//	return strlen(pszDest);
+//}
+
 int getHumidity(char * pszDest)
 {
 	PGM_P		humidity;
 	uint16_t	avgHumidityADC;
-	
+
 	avgHumidityADC = getADCAverage(ADC_CHANNEL3) - ADC_HUMIDITY_OFFSET;
-	
+
 	memcpy_P(&humidity, &humidityLookup[avgHumidityADC], sizeof(PGM_P));
 	strcpy_P(pszDest, humidity);
-	
+
 	return strlen(pszDest);
 }
 

@@ -10,8 +10,8 @@ static ADCRESULT			adcr;
 
 void setupADC(void)
 {
-	ADMUX	= _BV(REFS0) | _BV(ADLAR) | ADC_CHANNEL0;
-	ADCSRA	= _BV(ADEN) | _BV(ADIE) | ADC_PRESCALER_DIV16;
+	ADMUX	= _BV(REFS0) | ADC_CHANNEL0;
+	ADCSRA	= _BV(ADEN) | _BV(ADIE) | ADC_PRESCALER_DIV128;
 }
 
 void triggerADC(void)
