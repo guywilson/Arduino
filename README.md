@@ -64,7 +64,7 @@ void unscheduleTask(uint16_t taskID);
 
 /*
 ** Start the scheduling loop, should never return
-** should be the last call from main()
+** should be the last call from main().
 */
 void startScheduler();
 
