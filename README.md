@@ -10,62 +10,62 @@ Based around a real-time scheduler, suitable for any number of real-time control
 
 The scheduler API consists of the following functions:
 
-/*
-** Initialise the scheduler
-** Must be called before any other scheduler API functions
-*/
+/*  
+** Initialise the scheduler  
+** Must be called before any other scheduler API functions  
+*/  
 void initScheduler();
 
-/*
-** Register a task with the scheduler
-** A task must be registered with the scheduler before it can be scheduled
-**
-** taskID			The unique ID of the task
-** ptr_to_task_func	Address of the task function, must be of the form
-**					void task(PTASKPARM) where PTASKPARM is a pointer
-**					to a user defined type defined as void * in scheduler.h
-*/
+/*  
+** Register a task with the scheduler  
+** A task must be registered with the scheduler before it can be scheduled  
+**  
+** taskID			The unique ID of the task  
+** ptr_to_task_func	Address of the task function, must be of the form  
+**					void task(PTASKPARM) where PTASKPARM is a pointer  
+**					to a user defined type defined as void * in scheduler.h  
+*/  
 void registerTask(uint16_t taskID, ptr_to_task_func(PTASKPARM));
 
-/*
-** De-register a previously registered task
-**
-** taskID			The unique ID of the task
-*/
+/*  
+** De-register a previously registered task  
+**  
+** taskID			The unique ID of the task  
+*/  
 void deregisterTask(uint16_t taskID);
 
-/*
-** Schedule a task to run in the specified offset time from now
-** Time is specified in scheduler clock ticks, typically milliseconds
-** but depends on the real-time clock interrupt frequency
-**
-** taskID			The unique ID of the task
-** time				Number of clock ticks from now to run the task
-**					timer_t is system defined as appropriate, e.g. uint32_t
-** task_parms		Pointer to the TASKPARM for the task
-*/
+/*   
+** Schedule a task to run in the specified offset time from now  
+** Time is specified in scheduler clock ticks, typically milliseconds  
+** but depends on the real-time clock interrupt frequency  
+**  
+** taskID			The unique ID of the task  
+** time				Number of clock ticks from now to run the task  
+**					timer_t is system defined as appropriate, e.g. uint32_t  
+** task_parms		Pointer to the TASKPARM for the task  
+*/  
 void scheduleTask(uint16_t taskID, timer_t time, PTASKPARM task_parms);
 
-/*
-** Reschedule a task to run again with the same time delay as 
-** specified when scheduled with scheduleTask()
-**
-** taskID			The unique ID of the task
-** task_parms		Pointer to the TASKPARM for the task
-*/
+/*  
+** Reschedule a task to run again with the same time delay as  
+** specified when scheduled with scheduleTask()  
+**  
+** taskID			The unique ID of the task  
+** task_parms		Pointer to the TASKPARM for the task  
+*/  
 void rescheduleTask(uint16_t taskID, PTASKPARMS task_parms);
 
-/*
-** Unschedule a previously scheduled task
-**
-** taskID			The unique ID of the task
-*/
+/*  
+** Unschedule a previously scheduled task  
+**  
+** taskID			The unique ID of the task  
+*/  
 void unscheduleTask(uint16_t taskID);
 
-/*
-** Start the scheduling loop, should never return
-** should be the last call from main().
-*/
+/*  
+** Start the scheduling loop, should never return  
+** should be the last call from main()  
+*/  
 void startScheduler();
 
 The weather station takes inputs from sensors for temperature (ADC), air pressure (ADC), humidity (ADC), wind speed (EXTINT), rainfall (EXTINT).
