@@ -70,9 +70,9 @@ void startScheduler();
 
 The weather station takes inputs from sensors for temperature (ADC), air pressure (ADC), humidity (ADC), wind speed (EXTINT), rainfall (EXTINT).
 
-The weather station controller transmits weather data every 5 seconds over the microcontroller serial port, on an Arduino board, this is typically mapped to a USB port. Format of the weather data is as follows:
+The weather station controller transmits weather data every 5 seconds over the microcontroller serial port, on an Arduino board, this is typically mapped to a USB port. Format of the weather data is as follows (all data to 2 decimal places):
 
 <t:[temperature in degrees centigrade]><p:[pressure in miilibars]><h:[humidity in % relative humidity]><w:[wind speed in kph]><r:[rainfall in mm/hour]>newline
 
 Example
-<t:25.39><p:987><h:45.67><w:22.54><r:0.00>newline
+<t:25.39><p:987.68><h:45.67><w:22.54><r:0.00>newline
