@@ -24,4 +24,6 @@ void		unscheduleTask(uint16_t taskID);
 
 void		startScheduler();
 
+uint8_t 	getCPUPercentage(char * pszBuffer);
+
 #endif

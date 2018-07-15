@@ -20,14 +20,14 @@ void setupLEDPin(void)
 
 void turnOn(int LED_ID)
 {
-    /* set pin 5 high to turn led on */
-    PORTB |= LED_ID;
+	/* set pin 5 high to turn led on */
+	PORTB |= LED_ID;
 }
 
 void turnOff(int LED_ID)
 {
-    /* set pin 5 low to turn led off */
-    PORTB &= ~LED_ID;
+	/* set pin 5 low to turn led off */
+	PORTB &= ~LED_ID;
 }
 
 void toggleLED(int LED_ID)

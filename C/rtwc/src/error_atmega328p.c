@@ -14,11 +14,11 @@
 #define ERR_ON_NULLTASK				 100
 #define ERR_OFF_NULLTASK			1000
 
+#define ERR_ON_NULLTASKEXEC			  50
+#define ERR_OFF_NULLTASKEXEC		 500
+
 #define ERR_ON_DROPOUT				  50
 #define ERR_OFF_DROPOUT				  50
-
-#define ERR_ON_PUREVIRTUAL			5000
-#define ERR_OFF_PUREVIRTUAL			 500
 
 #define ERR_ON_DEFUALT				 100
 #define ERR_OFF_DEFUALT				 100
@@ -106,6 +106,23 @@ void _handleNullTask()
 ** Pattern:
 **
 ** On:	50 ms
+** Off:	500 ms
+*/
+void _handleNullTaskExec()
+{
+	while (1) {
+		turnOn(LED_ONBOARD);
+        _delay_ms(ERR_ON_NULLTASKEXEC);
+
+		turnOff(LED_ONBOARD);
+        _delay_ms(ERR_OFF_NULLTASKEXEC);
+	}
+}
+
+/*
+** Pattern:
+**
+** On:	50 ms
 ** Off:	50 ms
 */
 void _handleDropout()
@@ -116,23 +133,6 @@ void _handleDropout()
 
 		turnOff(LED_ONBOARD);
         _delay_ms(ERR_OFF_DROPOUT);
-	}
-}
-
-/*
-** Pattern:
-**
-** On:	5000 ms
-** Off:	500 ms
-*/
-void _handlePureVirtual()
-{
-	while (1) {
-		turnOn(LED_ONBOARD);
-        _delay_ms(ERR_ON_PUREVIRTUAL);
-
-		turnOff(LED_ONBOARD);
-        _delay_ms(ERR_OFF_PUREVIRTUAL);
 	}
 }
 
@@ -184,8 +184,8 @@ void handleError(unsigned int code)
 			_handleDropout();
 			break;
 		
-		case ERROR_PUREVIRTUAL:
-			_handlePureVirtual();
+		case ERROR_SCHED_NULLTASKEXEC:
+			_handleNullTaskExec();
 			break;
 			
 		default:

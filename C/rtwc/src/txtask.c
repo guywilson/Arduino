@@ -51,7 +51,7 @@ void TxTask(PTASKPARM p)
 	len = getRainfall(&szBuffer[i]);
 	szBuffer[i + len] = '>';
 	i += len + 1;
-	
+
 	szBuffer[i++] = '\n';
 	szBuffer[i] = 0;
 

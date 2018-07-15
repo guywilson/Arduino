@@ -10,6 +10,8 @@
 ******************************************************************************/
 
 #include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 #include <avr/io.h>
 
 #include "scheduler.h"
@@ -17,6 +19,7 @@
 #include "error.h"
 
 #define CHECK_TIMER_OVERFLOW
+//#define TRACK_CPU_PCT
 
 /******************************************************************************
 **
@@ -46,7 +49,6 @@ extern volatile timer_t _realTimeClock;		// External ref to the RTC
 TASKDEF		taskDefs[MAX_TASKS];			// Array of tasks for ther scheduler
 int			taskCount = 0;					// Number of tasks registered
 
-
 /******************************************************************************
 **
 ** Name: _nullTask()
@@ -60,7 +62,7 @@ int			taskCount = 0;					// Number of tasks registered
 ******************************************************************************/
 void _nullTask(PTASKPARM p)
 {
-	// Do nothing...
+	handleError(ERROR_SCHED_NULLTASKEXEC);
 }
 
 /******************************************************************************
@@ -140,6 +142,14 @@ void initScheduler()
 		td->pParameter		= NULL;
 		td->run				= &_nullTask;
 	}
+#ifdef TRACK_CPU_PCT
+	/*
+	** Set Port B - Pin 5 as output
+	** On the Arduino Nano, this is connected to the
+	** onboard LED...
+	*/
+    DDRB |= _BV(DDB5);
+#endif
 }
 
 /******************************************************************************
@@ -351,10 +361,23 @@ void startScheduler()
 				*/
 				td->isScheduled = 0;
 				
+#ifdef TRACK_CPU_PCT
+				/*
+				 * Turn on
+				 */
+				PORTB |= _BV(PORTB5);
+#endif
 				/*
 				** Run the task...
 				*/
 				td->run(td->pParameter);
+
+#ifdef TRACK_CPU_PCT
+				/*
+				 * Turn off
+				 */
+				PORTB &= ~(_BV(PORTB5));
+#endif
 			}
 		}
 		
