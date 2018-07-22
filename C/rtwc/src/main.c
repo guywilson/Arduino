@@ -18,6 +18,8 @@
 #include "serial_atmega328p.h"
 #include "error.h"
 
+void main(void) __attribute__ ((noreturn));
+
 void setup(void)
 {
 	//stop interrupts
@@ -41,10 +43,14 @@ void setup(void)
 	//enable interrupts
     sei();
 	
+    /*
+     * Trigger the first conversion...
+     */
 	triggerADC();
 }
 
-int main(void)
+#pragma GCC diagnostic ignored  "-Wmain"
+void main(void)
 {
 	setup();
 	
@@ -58,11 +64,4 @@ int main(void)
 	** Start the scheduler...
 	*/
 	startScheduler();
-	
-	/*
-	** Should never reach here...
-	*/
-	handleError(ERROR_SCHED_DROPOUT);
-	
-	return 0;
 }
