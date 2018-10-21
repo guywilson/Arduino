@@ -49,7 +49,7 @@ void ADCTask(PTASKPARM p)
 	** Recommended that the first conversion result for each channel
 	** is ignored as it is likely to be inaccurate...
 	*/
-	if (conversionCount < ADC_USED_CHANNELS) {
+	if (conversionCount < ADC_MAX_CHANNEL_NUM) {
 		conversionCount++;
 	}
 	else {
@@ -86,12 +86,13 @@ uint16_t getADCAverage(uint8_t channel)
 #endif
 }
 
+
 int getPressure(char * pszDest)
 {
 	PGM_P		pressure;
 	uint16_t	avgPressureADC;
 	
-	avgPressureADC = getADCAverage(ADC_CHANNEL2);
+	avgPressureADC = getADCAverage(ADC_BAROMETER_CHANNEL);
 	
 	memcpy_P(&pressure, &mbarLookup[avgPressureADC], sizeof(PGM_P));
 	strcpy_P(pszDest, pressure);
@@ -99,23 +100,12 @@ int getPressure(char * pszDest)
 	return strlen(pszDest);
 }
 
-//int getHumidity(char * pszDest)
-//{
-//	uint16_t	avgHumidityADC;
-//
-//	avgHumidityADC = adcResults[ADC_CHANNEL3];
-//
-//	itoa(avgHumidityADC, pszDest, 10);
-//
-//	return strlen(pszDest);
-//}
-
 int getHumidity(char * pszDest)
 {
 	PGM_P		humidity;
 	uint16_t	avgHumidityADC;
 
-	avgHumidityADC = getADCAverage(ADC_CHANNEL3) - ADC_HUMIDITY_OFFSET;
+	avgHumidityADC = getADCAverage(ADC_HUMIDITY_CHANNEL) - ADC_HUMIDITY_OFFSET;
 
 	memcpy_P(&humidity, &humidityLookup[avgHumidityADC], sizeof(PGM_P));
 	strcpy_P(pszDest, humidity);
@@ -130,14 +120,13 @@ int getTemperature(char * pszDest)
 	int16_t			avgNegativeTempADC;
 	int16_t			t;
 	
-	avgPositiveTempADC = getADCAverage(ADC_CHANNEL0);
-	avgNegativeTempADC = getADCAverage(ADC_CHANNEL1);
+	avgPositiveTempADC = getADCAverage(ADC_THERMOPOS_CHANNEL);
+	avgNegativeTempADC = getADCAverage(ADC_THERMONEG_CHANNEL);
 	
 	t = (avgPositiveTempADC - avgNegativeTempADC) + TEMP_INDEX_OFFSET;
 	
 	memcpy_P(&temperature, &tempLookup[t], sizeof(PGM_P));
 	strcpy_P(pszDest, temperature);
-	strcpy(pszDest, "25.53");
 	
 	return strlen(pszDest);
 }

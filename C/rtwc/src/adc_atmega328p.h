@@ -23,7 +23,16 @@
 #define ADC_PRESCALER_DIV64			0x06
 #define ADC_PRESCALER_DIV128		0x07
 
-#define ADC_USED_CHANNELS			4
+#define ADC_MAX_CHANNEL_NUM			7
+
+/*
+ * Define which sensor is attached to which channel
+ */
+#define ADC_BAROMETER_CHANNEL			ADC_CHANNEL0
+#define ADC_HUMIDITY_CHANNEL			ADC_CHANNEL1
+#define ADC_THERMOPOS_CHANNEL			ADC_CHANNEL5
+#define ADC_THERMONEG_CHANNEL			ADC_CHANNEL6
+
 
 void setupADC(void);
 void triggerADC(void);
