@@ -222,5 +222,9 @@ int main(int argc, char *argv[])
     	printf("\n Thread created successfully\n");
     }
 
+    while (1) {
+    	usleep(1000L);
+    }
+
 	return 0;
 }
