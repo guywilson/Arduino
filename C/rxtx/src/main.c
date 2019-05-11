@@ -65,6 +65,8 @@
 #define RX_CMD_ANEMOMETER			0x02
 #define RX_CMD_RAINGUAGE			0x04
 
+char szPort[128];
+
 int set_interface_attribs(int fd, int speed)
 {
 	struct termios SerialPortSettings;
@@ -172,6 +174,7 @@ void * queryTPHThread(void * pArgs)
 	uint8_t		msgID = 1;
 	int			go = 1;
 	int			frameLength = 0;
+	int			readLen;
 	uint8_t		frame[80];
 
 	while (go) {
@@ -184,11 +187,15 @@ void * queryTPHThread(void * pArgs)
 
 		frameLength = 6;
 
-		writeSerial(SERIAL_PORT, frame, frameLength);
+		writeSerial(szPort, frame, frameLength);
 
 		usleep(500000L);
 
-		readSerial(SERIAL_PORT, frame);
+		readLen = readSerial(szPort, frame);
+
+		for (int i = 0;i < readLen;i++) {
+			printf("Read [0x%02X\n", frame[i]);
+		}
 
 		sleep(5);
 	}
@@ -200,6 +207,10 @@ int main(int argc, char *argv[])
 {
 	int			err;
 	pthread_t	tid;
+
+	if (argc > 1) {
+		strcpy(szPort, &argv[1][0]);
+	}
 
 	err = pthread_create(&tid, NULL, &queryTPHThread, NULL);
 
