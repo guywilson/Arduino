@@ -175,6 +175,7 @@ void * queryTPHThread(void * pArgs)
 	int			go = 1;
 	int			frameLength = 0;
 	int			readLen;
+	int			i;
 	uint8_t		frame[80];
 
 	while (go) {
@@ -193,7 +194,7 @@ void * queryTPHThread(void * pArgs)
 
 		readLen = readSerial(szPort, frame);
 
-		for (int i = 0;i < readLen;i++) {
+		for (i = 0;i < readLen;i++) {
 			printf("Read [0x%02X\n", frame[i]);
 		}
 
