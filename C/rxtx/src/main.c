@@ -258,7 +258,7 @@ int main(int argc, char *argv[])
 		strcpy(szPort, SERIAL_PORT);
 	}
 
-	fd = openSerialPort(szPort, B9600);
+	fd = openSerialPort(szPort, B115200);
 
 	err = pthread_create(&tid, NULL, &queryTPHThread, &fd);
 
