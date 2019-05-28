@@ -221,9 +221,9 @@ void * queryTPHThread(void * pArgs)
 		 */
 		bytesRead = read(*fd, frame, 80);
 
-		while (bytesRead < 0 && errCount < 49) {
+		while (bytesRead < 0 && errCount < 10) {
 			bytesRead = read(*fd, frame, 80);
-			usleep(1000L);
+			usleep(100000L);
 			errCount++;
 		}
 
