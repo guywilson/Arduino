@@ -54,8 +54,8 @@ int openSerialPort(char * pszPort, int speed)
 
 	t.c_oflag &= ~OPOST;						/* No Output Processing                                  */
 	
-	t.c_cc[VMIN]  = 1;							/* Read 1 character                                      */
-	t.c_cc[VTIME] = 10;  						/* Wait 1 sec                                            */
+	t.c_cc[VMIN]  = 6;							/* Read minimum 6 characters                             */
+	t.c_cc[VTIME] = 10;  						/* Wait 1 sec between characters                         */
 	
 	/*
 	 * Set the new port parameters...
@@ -73,7 +73,7 @@ int openSerialPort(char * pszPort, int speed)
 	/*
 	 * Set non-blocking read...
 	 */
-	fcntl(fd, F_SETFL, FNDELAY);
+	// fcntl(fd, F_SETFL, FNDELAY);
 	
 	return fd;
 }
@@ -198,7 +198,7 @@ void * queryTPHThread(void * pArgs)
 
 		writeLen = write(*fd, frame, frameLength);
 
-		printf("Write: ");
+		printf("TX[%d]: ", writeLen);
 		for (i = 0;i < writeLen;i++) {
 			printf("[0x%02X]", frame[i]);
 		}
@@ -207,36 +207,37 @@ void * queryTPHThread(void * pArgs)
 		errorCount = 0;
 		onwards = 1;
 
-		printf("Read: ");
+		bytesRead = read(*fd, &b, 80);
 
-		while (onwards) {
-			bytesRead = read(*fd, &b, 1);
+		printf("RX[%d]: ", bytesRead);
 
-			if (bytesRead > 0) {
+		if (bytesRead > 0) {
+			for (i = 0;i < bytesRead;i++) {
 				onwards = processByte(b);
-				zeroCount = 0;
-			}
-			else if (bytesRead == 0) {
-				usleep(1000L);
-				zeroCount++;
-			}
-			else {
-				if (errno) {
-					printf("E[%s]", strerror(errno));
-				}
-
-				usleep(100000L);
-				errorCount++;
 			}
 
-			if (zeroCount == 50) {
-				zeroCount = 0;
-				onwards = 0;
+			zeroCount = 0;
+		}
+		else if (bytesRead == 0) {
+			usleep(1000L);
+			zeroCount++;
+		}
+		else {
+			if (errno) {
+				printf("E[%s]", strerror(errno));
 			}
-			if (errorCount == 5) {
-				onwards = 0;
-				errorCount = 0;
-			}
+
+			usleep(100000L);
+			errorCount++;
+		}
+
+		if (zeroCount == 50) {
+			zeroCount = 0;
+			onwards = 0;
+		}
+		if (errorCount == 5) {
+			onwards = 0;
+			errorCount = 0;
 		}
 
 		printf("\n");
