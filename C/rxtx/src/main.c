@@ -22,7 +22,7 @@ int openSerialPort(char * pszPort, int speed)
 	/*
 	 * Open the serial port...
 	 */
-	fd = open(pszPort, O_RDWR | O_NOCTTY | O_NDELAY);
+	fd = open(pszPort, O_RDWR | O_NOCTTY);
 
 	if (fd < 0) {
         printf("Error opening %s: %s\n", pszPort, strerror(errno));
@@ -73,7 +73,7 @@ int openSerialPort(char * pszPort, int speed)
 	/*
 	 * Set non-blocking read...
 	 */
-	fcntl(fd, F_SETFL, FNDELAY);
+	//fcntl(fd, F_SETFL, FNDELAY);
 	
 	return fd;
 }
@@ -178,7 +178,6 @@ void * queryTPHThread(void * pArgs)
 	int			bytesRead = 0;
 	int			i;
 	uint8_t		frame[80];
-	uint8_t		b;
 	int	*		fd;
 
 	fd = (int *)pArgs;
@@ -217,13 +216,13 @@ void * queryTPHThread(void * pArgs)
 		/*
 		 * Read response frame...
 		 */
-		bytesRead = read(*fd, &b, 80);
+		bytesRead = read(*fd, frame, 80);
 
 		printf("RX[%d]: ", bytesRead);
 
 		if (bytesRead > 0) {
 			for (i = 0;i < bytesRead;i++) {
-				processByte(b);
+				processByte(frame[i]);
 			}
 		}
 		else if (bytesRead < 0) {
