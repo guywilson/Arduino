@@ -60,9 +60,11 @@
 
 typedef struct {
 	uint8_t			start;
-	uint8_t			cmdFrameLength;
+	uint8_t			frameLength;
 	uint8_t			msgID;
-	uint8_t			cmd;
+	uint8_t			responseType;
+
+	uint8_t			errorCode;
 
 	uint8_t			data[MAX_DATA_LENGTH];
 

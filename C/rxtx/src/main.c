@@ -82,7 +82,6 @@ int processByte(uint8_t b)
 {
 	static int 			state = RX_STATE_START;
 	static int			i;
-	static uint8_t		errorCode;
 	static RXMSGFRAME	frame;
 
 	int 				rtn = 1;
@@ -100,7 +99,7 @@ int processByte(uint8_t b)
 		case RX_STATE_LENGTH:
 			printf("[L]");
 			printf("[%d]", b);
-			frame.cmdFrameLength = b;
+			frame.frameLength = b;
 			state = RX_STATE_MSGID;
 			break;
 
@@ -114,9 +113,9 @@ int processByte(uint8_t b)
 		case RX_STATE_RESPTYPE:
 			if (b == MSG_CHAR_ACK) {
 				printf("[ACK]");
-				frame.cmd = MSG_CHAR_ACK;
+				frame.responseType = MSG_CHAR_ACK;
 
-				if (frame.cmdFrameLength > 2) {
+				if (frame.frameLength > 2) {
 					state = RX_STATE_DATA;
 					i = 0;
 				}
@@ -126,7 +125,7 @@ int processByte(uint8_t b)
 			}
 			else if (b == MSG_CHAR_NAK) {
 				printf("[NAK]");
-				frame.cmd = MSG_CHAR_NAK;
+				frame.responseType = MSG_CHAR_NAK;
 
 				state = RX_STATE_ERRCODE;
 			}
@@ -136,7 +135,7 @@ int processByte(uint8_t b)
 			printf("%c", b);
 			frame.data[i++] = b;
 
-			if (i == frame.cmdFrameLength - 2) {
+			if (i == frame.frameLength - 2) {
 				state = RX_STATE_CHECKSUM;
 			}
 			break;
@@ -144,7 +143,7 @@ int processByte(uint8_t b)
 		case RX_STATE_ERRCODE:
 			printf("[E]");
 			printf("[0x%02X]", b);
-			errorCode = b;
+			frame.errorCode = b;
 			state = RX_STATE_CHECKSUM;
 			break;
 
@@ -222,15 +221,19 @@ void * queryTPHThread(void * pArgs)
 				zeroCount++;
 			}
 			else {
-				usleep(1000L);
+				if (errno) {
+					printf("E[%s]", strerror(errno));
+				}
+
+				usleep(100000L);
 				errorCount++;
 			}
 
-			if (zeroCount == 99) {
+			if (zeroCount == 50) {
 				zeroCount = 0;
 				onwards = 0;
 			}
-			if (errorCount == 999) {
+			if (errorCount == 5) {
 				onwards = 0;
 				errorCount = 0;
 			}
