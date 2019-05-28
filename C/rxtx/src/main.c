@@ -212,7 +212,7 @@ void * queryTPHThread(void * pArgs)
 		/*
 		 * Wait 10ms for response...
 		 */
-		usleep(10000L);
+		usleep(50000L);
 
 		errCount = 0;
 
