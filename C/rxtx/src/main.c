@@ -54,7 +54,7 @@ int openSerialPort(char * pszPort, int speed)
 
 	t.c_oflag &= ~OPOST;						/* No Output Processing                                  */
 	
-	t.c_cc[VMIN]  = 0;
+	t.c_cc[VMIN]  = 1;							/* Read 1 character                                      */
 	t.c_cc[VTIME] = 10;  						/* Wait 1 sec                                            */
 	
 	/*
