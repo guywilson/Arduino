@@ -73,7 +73,7 @@ int openSerialPort(char * pszPort, int speed)
 	/*
 	 * Set non-blocking read...
 	 */
-	// fcntl(fd, F_SETFL, FNDELAY);
+	fcntl(fd, F_SETFL, FNDELAY);
 	
 	return fd;
 }
@@ -173,13 +173,10 @@ void * queryTPHThread(void * pArgs)
 {
 	uint8_t		msgID = 1;
 	int			go = 1;
-	int			onwards = 1;
 	int			frameLength = 0;
 	int			writeLen;
 	int			bytesRead = 0;
 	int			i;
-	int			errorCount = 0;
-	int			zeroCount = 0;
 	uint8_t		frame[80];
 	uint8_t		b;
 	int	*		fd;
@@ -196,6 +193,9 @@ void * queryTPHThread(void * pArgs)
 
 		frameLength = 6;
 
+		/*
+		 * Write cmd frame...
+		 */
 		writeLen = write(*fd, frame, frameLength);
 
 		printf("TX[%d]: ", writeLen);
@@ -204,40 +204,34 @@ void * queryTPHThread(void * pArgs)
 		}
 		printf("\n");
 
-		errorCount = 0;
-		onwards = 1;
+		/*
+		 * Clear frame...
+		 */
+		memset(frame, 0, 80);
 
+		/*
+		 * Wait 10ms for response...
+		 */
+		usleep(10000L);
+
+		/*
+		 * Read response frame...
+		 */
 		bytesRead = read(*fd, &b, 80);
 
 		printf("RX[%d]: ", bytesRead);
 
 		if (bytesRead > 0) {
 			for (i = 0;i < bytesRead;i++) {
-				onwards = processByte(b);
+				processByte(b);
 			}
-
-			zeroCount = 0;
 		}
-		else if (bytesRead == 0) {
-			usleep(1000L);
-			zeroCount++;
-		}
-		else {
+		else if (bytesRead < 0) {
 			if (errno) {
 				printf("E[%s]", strerror(errno));
 			}
 
 			usleep(100000L);
-			errorCount++;
-		}
-
-		if (zeroCount == 50) {
-			zeroCount = 0;
-			onwards = 0;
-		}
-		if (errorCount == 5) {
-			onwards = 0;
-			errorCount = 0;
 		}
 
 		printf("\n");
