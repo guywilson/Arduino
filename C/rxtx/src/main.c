@@ -22,7 +22,7 @@ int openSerialPort(char * pszPort, int speed)
 	/*
 	 * Open the serial port...
 	 */
-	fd = open(pszPort, O_RDWR | O_NOCTTY);
+	fd = open(pszPort, O_RDWR | O_NOCTTY | O_NDELAY);
 
 	if (fd < 0) {
         printf("Error opening %s: %s\n", pszPort, strerror(errno));
