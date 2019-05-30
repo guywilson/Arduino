@@ -18,13 +18,13 @@
 int openSerialPort(char * pszPort, int speed)
 {
 	int				fd;
-	int				status;
+	int				rc;
 	struct termios 	t;
 
 	/*
 	 * Open the serial port...
 	 */
-	fd = open(pszPort, O_RDWR | O_NOCTTY | O_NDELAY);
+	fd = open(pszPort, O_RDWR | O_NOCTTY | O_NONBLOCK);
 
 	if (fd < 0) {
         printf("Error opening %s: %s\n", pszPort, strerror(errno));
@@ -42,19 +42,24 @@ int openSerialPort(char * pszPort, int speed)
 	cfsetispeed(&t, speed);
 	cfsetospeed(&t, speed);
 
-	t.c_cflag &= ~PARENB;   					/* Disables the Parity Enable bit(PARENB),So No Parity   */
-	t.c_cflag &= ~CSTOPB;   					/* CSTOPB = 2 Stop bits,here it is cleared so 1 Stop bit */
-	t.c_cflag &= ~CSIZE;	 					/* Clears the mask for setting the data size             */
-	t.c_cflag |=  CS8;      					/* Set the data bits = 8                                 */
+	t.c_iflag = IGNBRK;
+	t.c_oflag = 0;
+	t.c_lflag = 0;
+	t.c_cflag = (CS8 | CREAD | CLOCAL);
 
-	t.c_cflag &= ~CRTSCTS;       				/* No Hardware flow Control                         	 */
-	t.c_cflag |= CREAD | CLOCAL; 				/* Enable receiver,Ignore Modem Control lines            */
-
-
-	t.c_iflag &= ~(IXON | IXOFF | IXANY);		/* Disable XON/XOFF flow control both i/p and o/p        */
-	t.c_iflag &= ~(ICANON|ECHO|ECHOE|ISIG);		/* Non Cannonical mode                                   */
-
-	t.c_oflag &= ~OPOST;						/* No Output Processing                                  */
+//	t.c_cflag &= ~PARENB;   					/* Disables the Parity Enable bit(PARENB),So No Parity   */
+//	t.c_cflag &= ~CSTOPB;   					/* CSTOPB = 2 Stop bits,here it is cleared so 1 Stop bit */
+//	t.c_cflag &= ~CSIZE;	 					/* Clears the mask for setting the data size             */
+//	t.c_cflag |=  CS8;      					/* Set the data bits = 8                                 */
+//
+//	t.c_cflag &= ~CRTSCTS;       				/* No Hardware flow Control                         	 */
+//	t.c_cflag |= CREAD | CLOCAL; 				/* Enable receiver,Ignore Modem Control lines            */
+//
+//
+//	t.c_iflag &= ~(IXON | IXOFF | IXANY);		/* Disable XON/XOFF flow control both i/p and o/p        */
+//	t.c_iflag &= ~(ICANON|ECHO|ECHOE|ISIG);		/* Non Cannonical mode                                   */
+//
+//	t.c_oflag &= ~OPOST;						/* No Output Processing                                  */
 	
 	t.c_cc[VMIN]  = 6;							/* Read minimum 6 characters                             */
 	t.c_cc[VTIME] = 10;  						/* Wait 1 sec between characters                         */
@@ -68,29 +73,15 @@ int openSerialPort(char * pszPort, int speed)
 	}
 
 	/*
-	 * Flush the changes...
+	 * Set blocking read...
 	 */
-	tcflush(fd, TCIFLUSH);
+	rc = fcntl(fd, F_GETFL, 0);
 
-	if (ioctl(fd, TIOCMGET, &status) == -1) {
-		printf("Failed to get IOCTL status\n");
-		return -1;
+	if (rc != -1) {
+		fcntl(fd, F_SETFL, rc & ~O_NONBLOCK);
 	}
 
-	/*
-	 * Turn on DTR and RTS...
-	 */
-	status |= TIOCM_DTR | TIOCM_RTS;
-
-	if(ioctl(fd, TIOCMSET, &status) == -1) {
-		printf("Failed to set IOCTL status\n");
-		return -1;
-	}
-
-	/*
-	 * Set non-blocking read...
-	 */
-	fcntl(fd, F_SETFL, O_NONBLOCK);
+//	fcntl(fd, F_SETFL, O_NONBLOCK);
 	
 	return fd;
 }
