@@ -17,6 +17,7 @@
 int openSerialPort(char * pszPort, int speed)
 {
 	int				fd;
+	int				status;
 	struct termios 	t;
 
 	/*
@@ -69,6 +70,21 @@ int openSerialPort(char * pszPort, int speed)
 	 * Flush the changes...
 	 */
 	tcflush(fd, TCIFLUSH);
+
+	if (ioctl(fd, TIOCMGET, &status) == -1) {
+		printf("Failed to get IOCTL status\n");
+		return -1;
+	}
+
+	/*
+	 * Turn on DTR and RTS...
+	 */
+	status |= TIOCM_DTR | TIOCM_RTS;
+
+	if(ioctl(fd, TIOCMSET, &status) == -1) {
+		printf("Failed to set IOCTL status\n");
+		return -1;
+	}
 
 	/*
 	 * Set non-blocking read...
@@ -182,8 +198,6 @@ void * queryTPHThread(void * pArgs)
 	int	*		fd;
 
 	fd = (int *)pArgs;
-
-	sleep(2);
 
 	while (go) {
 		frame[0] = MSG_CHAR_START;
