@@ -183,6 +183,8 @@ void * queryTPHThread(void * pArgs)
 
 	fd = (int *)pArgs;
 
+	sleep(2);
+
 	while (go) {
 		frame[0] = MSG_CHAR_START;
 		frame[1] = 2;
@@ -210,7 +212,7 @@ void * queryTPHThread(void * pArgs)
 		memset(frame, 0, 80);
 
 		/*
-		 * Wait 10ms for response...
+		 * Wait 50ms for response...
 		 */
 		usleep(50000L);
 
