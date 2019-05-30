@@ -202,9 +202,9 @@ void * queryTPHThread(void * pArgs)
 		memset(frame, 0, 80);
 
 		/*
-		 * Wait 10ms for response...
+		 * Wait 20ms for response...
 		 */
-		usleep(10000L);
+		usleep(20000L);
 
 		errCount = 0;
 
