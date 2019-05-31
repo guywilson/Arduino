@@ -69,6 +69,7 @@ int openSerialPort(char * pszPort, int speed)
 	 */
 	if ((tcsetattr(fd, TCSANOW, &t)) != 0) {
 		printf("\n  ERROR ! in Setting attributes\n");
+		close(fd);
 		return -1;
 	}
 
@@ -81,8 +82,6 @@ int openSerialPort(char * pszPort, int speed)
 		fcntl(fd, F_SETFL, rc & ~O_NONBLOCK);
 	}
 
-//	fcntl(fd, F_SETFL, O_NONBLOCK);
-	
 	return fd;
 }
 
@@ -271,6 +270,10 @@ int main(int argc, char *argv[])
 	}
 
 	fd = openSerialPort(szPort, B115200);
+
+	if (fd < 0) {
+		return -1;
+	}
 
 	err = pthread_create(&tid, NULL, &queryTPHThread, &fd);
 
