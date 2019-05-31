@@ -75,13 +75,13 @@ int openSerialPort(char * pszPort, int speed)
 	/*
 	 * Set blocking read...
 	 */
-//	rc = fcntl(fd, F_GETFL, 0);
-//
-//	if (rc != -1) {
-//		fcntl(fd, F_SETFL, rc & ~O_NONBLOCK);
-//	}
+	rc = fcntl(fd, F_GETFL, 0);
 
-	fcntl(fd, F_SETFL, O_NONBLOCK);
+	if (rc != -1) {
+		fcntl(fd, F_SETFL, rc & ~O_NONBLOCK);
+	}
+
+//	fcntl(fd, F_SETFL, O_NONBLOCK);
 	
 	return fd;
 }
