@@ -4,6 +4,7 @@
 #include <string.h>
 #include <termios.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -46,6 +47,20 @@ int openSerialPort(char * pszPort, int speed)
 	t.c_lflag = 0;
 	t.c_cflag = (CS8 | CREAD | CLOCAL);
 
+//	t.c_cflag &= ~PARENB;   					/* Disables the Parity Enable bit(PARENB),So No Parity   */
+//	t.c_cflag &= ~CSTOPB;   					/* CSTOPB = 2 Stop bits,here it is cleared so 1 Stop bit */
+//	t.c_cflag &= ~CSIZE;	 					/* Clears the mask for setting the data size             */
+//	t.c_cflag |=  CS8;      					/* Set the data bits = 8                                 */
+//
+//	t.c_cflag &= ~CRTSCTS;       				/* No Hardware flow Control                         	 */
+//	t.c_cflag |= CREAD | CLOCAL; 				/* Enable receiver,Ignore Modem Control lines            */
+//
+//
+//	t.c_iflag &= ~(IXON | IXOFF | IXANY);		/* Disable XON/XOFF flow control both i/p and o/p        */
+//	t.c_iflag &= ~(ICANON|ECHO|ECHOE|ISIG);		/* Non Cannonical mode                                   */
+//
+//	t.c_oflag &= ~OPOST;						/* No Output Processing                                  */
+	
 	t.c_cc[VMIN]  = 6;							/* Read minimum 6 characters                             */
 	t.c_cc[VTIME] = 10;  						/* Wait 1 sec between characters                         */
 	
@@ -58,15 +73,16 @@ int openSerialPort(char * pszPort, int speed)
 	}
 
 	/*
-	* Everything is now set up for a local line without modem control
-	* or flow control, so clear O_NONBLOCK again.
-	*/
-	rc = fcntl(fd, F_GETFL, 0);
+	 * Set blocking read...
+	 */
+//	rc = fcntl(fd, F_GETFL, 0);
+//
+//	if (rc != -1) {
+//		fcntl(fd, F_SETFL, rc & ~O_NONBLOCK);
+//	}
 
-	if (rc != -1) {
-		fcntl(fd, F_SETFL, rc & ~O_NONBLOCK);
-	}
-
+	fcntl(fd, F_SETFL, O_NONBLOCK);
+	
 	return fd;
 }
 
@@ -202,9 +218,9 @@ void * queryTPHThread(void * pArgs)
 		memset(frame, 0, 80);
 
 		/*
-		 * Wait 20ms for response...
+		 * Wait 50ms for response...
 		 */
-		usleep(20000L);
+		usleep(50000L);
 
 		errCount = 0;
 
