@@ -36,12 +36,6 @@ int openSerialPort(char * pszPort, int speed)
 	 */
 	tcgetattr(fd, &t);
 
-	/*
-	 * Set the baud rate...
-	 */
-	cfsetispeed(&t, speed);
-	cfsetospeed(&t, speed);
-
 	t.c_iflag = IGNBRK;
 	t.c_oflag = 0;
 	t.c_lflag = 0;
@@ -62,7 +56,13 @@ int openSerialPort(char * pszPort, int speed)
 //	t.c_oflag &= ~OPOST;						/* No Output Processing                                  */
 	
 	t.c_cc[VMIN]  = 6;							/* Read minimum 6 characters                             */
-	t.c_cc[VTIME] = 10;  						/* Wait 1 sec between characters                         */
+	t.c_cc[VTIME] = 0;  						/* No wait                                               */
+
+	/*
+	 * Set the baud rate...
+	 */
+	cfsetispeed(&t, speed);
+	cfsetospeed(&t, speed);
 	
 	/*
 	 * Set the new port parameters...
